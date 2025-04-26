@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>thvlayu | Curated Digital Experience</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tiempos+Headline:wght@700&family=Tiempos+Text:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="mobile-menu-overlay"></div>
+    <header class="main-header">
+        <div class="container">
+            <button class="mobile-menu-btn" aria-label="Toggle menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <div class="logo">
+                <h1>thvlayu</h1>
+                <span>be delusional and do anything you want</span>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#" class="active">Home</a></li>
+                    <li><a href="#">Thoughts</a></li>
+                    <li><a href="#">Projects</a></li>
+                    <li><a href="#">Resources</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Professional <span class="highlight">Showcase</span></h2>
+                <p class="subtitle">Experience curated excellence through interactive elements and seamless transitions.</p>
+                <div class="hero-interactive">
+                    <div class="interactive-card" data-category="design">
+                        <i class="fas fa-pencil-ruler"></i>
+                        <h4>Design</h4>
+                        <p>Modern UI/UX principles</p>
+                    </div>
+                    <div class="interactive-card" data-category="development">
+                        <i class="fas fa-code"></i>
+                        <h4>Development</h4>
+                        <p>Cutting-edge technologies</p>
+                    </div>
+                    <div class="interactive-card" data-category="strategy">
+                        <i class="fas fa-chess"></i>
+                        <h4>Strategy</h4>
+                        <p>Data-driven decisions</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="trending-topics">
+            <h3><i class="fas fa-fire"></i> Currently Resonating</h3>
+            <div class="topic-tags" id="trending-topics">
+                <!-- Will be populated by JavaScript -->
+                <div class="tag-skeleton"></div>
+                <div class="tag-skeleton"></div>
+                <div class="tag-skeleton"></div>
+                <div class="tag-skeleton"></div>
+            </div>
+        </section>
+
+        <section class="news-feed">
+            <div class="section-header">
+                <h3><i class="fas fa-compass"></i> Signal Among Noise</h3>
+                <div class="filter-options">
+                    <select id="category-filter">
+                        <option value="all">All Dimensions</option>
+                        <option value="tech">Technology</option>
+                        <option value="science">Science</option>
+                        <option value="design">Design</option>
+                        <option value="philosophy">Philosophy</option>
+                    </select>
+                    <select id="time-filter">
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="news-grid">
+                <!-- News items will be populated by JavaScript -->
+                <div class="loading-spinner"></div>
+            </div>
+
+            <button class="load-more">Reveal More Patterns</button>
+        </section>
+
+        <section class="personal-notes">
+            <h3><i class="fas fa-pen-fancy"></i> Personal Annotation</h3>
+            <div class="note-content">
+                <p>"The tools we use to process information fundamentally shape the thoughts we can have. This collection represents my ongoing attempt to curate the signal from the noise, and occasionally add my own reverberations to the chorus."</p>
+                <div class="note-signature">— thvlayu</div>
+            </div>
+        </section>
+
+        <section class="newsletter-section">
+            <div class="newsletter-content">
+                <h3><i class="fas fa-paper-plane"></i> Resonance Frequency</h3>
+                <p>Subscribe for periodic transmissions of what's capturing my attention.</p>
+                <form id="newsletter-form" class="newsletter-form">
+                    <input type="email" id="email" placeholder="your@email.com" required>
+                    <textarea id="feedback" placeholder="What frequencies are you attuned to? (Optional)"></textarea>
+                    <button type="submit">Tune In</button>
+                </form>
+                <div class="form-message" id="form-message"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-logo">
+                <h4>thvlayu</h4>
+                <p>be delusional and do anything you want</p>
+            </div>
+            <div class="footer-links">
+                <div class="links-column">
+                    <h5>Explore</h5>
+                    <ul>
+                        <li><a href="#">Thoughts</a></li>
+                        <li><a href="#">Projects</a></li>
+                        <li><a href="#">Resources</a></li>
+                    </ul>
+                </div>
+                <div class="links-column">
+                    <h5>Connect</h5>
+                    <ul>
+                        <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+                        <li><a href="#"><i class="fab fa-github"></i> GitHub</a></li>
+                        <li><a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
+                    </ul>
+                </div>
+                <div class="links-column">
+                    <h5>Legal</h5>
+                    <ul>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 thvlayu. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
