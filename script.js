@@ -12,63 +12,63 @@ document.addEventListener('DOMContentLoaded', function() {
             "Assets/bg5.jpeg",
             "Assets/bg6.jpeg"
         ];
-        
+
+        // --- START: Revised Slideshow Logic ---
+
         let currentImageIndex = 0;
-        
-        // Set initial background image
-        heroSection.style.backgroundImage = `url('${bgImages[0]}')`;  // Start with bg0
-        heroSection.style.backgroundSize = "cover";
-        heroSection.style.backgroundPosition = "center";
-        heroSection.style.position = "relative";
+        const bgDivs = []; // Array to hold references to the background divs
+
+        // Basic styling for the hero section
+        heroSection.style.position = "relative"; // Needed for absolute positioning of children
         heroSection.style.marginTop = "1.5rem";
-        heroSection.style.transition = "background-image 2.5s ease-in-out";
-        
-        // Create background slideshow
+        heroSection.style.overflow = "hidden"; // Hide parts of bg divs that might peek out
+
+        // Create and append background divs for each image
+        bgImages.forEach((imgSrc, index) => {
+            const bgDiv = document.createElement('div');
+            bgDiv.className = 'hero-bg-slide'; // Use a class for styling
+            bgDiv.style.backgroundImage = `url('${imgSrc}')`;
+            bgDiv.style.position = 'absolute';
+            bgDiv.style.top = '0';
+            bgDiv.style.left = '0';
+            bgDiv.style.width = '100%';
+            bgDiv.style.height = '100%';
+            bgDiv.style.backgroundSize = 'cover';
+            bgDiv.style.backgroundPosition = 'center';
+            bgDiv.style.opacity = (index === 0) ? '1' : '0'; // First image visible, others hidden
+            bgDiv.style.transition = 'opacity 1.5s ease-in-out'; // Transition opacity
+            bgDiv.style.zIndex = '0'; // Behind hero content
+
+            heroSection.appendChild(bgDiv);
+            bgDivs.push(bgDiv); // Store reference
+        });
+
+        // Create background slideshow function
         function changeBackground() {
+            const previousImageIndex = currentImageIndex;
             currentImageIndex = (currentImageIndex + 1) % bgImages.length;
-            
-            // Create a new div for the next image to enable crossfade
-            const nextImageDiv = document.createElement('div');
-            nextImageDiv.className = 'hero-bg-transition';
-            nextImageDiv.style.backgroundImage = `url('${bgImages[currentImageIndex]}')`;  
-            nextImageDiv.style.position = 'absolute';
-            nextImageDiv.style.top = '0';
-            nextImageDiv.style.left = '0';
-            nextImageDiv.style.width = '100%';
-            nextImageDiv.style.height = '100%';
-            nextImageDiv.style.backgroundSize = 'cover';
-            nextImageDiv.style.backgroundPosition = 'center';
-            nextImageDiv.style.opacity = '0';
-            nextImageDiv.style.transition = 'opacity 1.5s ease-in-out';
-            nextImageDiv.style.zIndex = '0';
-            
-            // Add the new div to hero section
-            heroSection.appendChild(nextImageDiv);
-            
-            // Fade in the new image
-            setTimeout(() => {
-                nextImageDiv.style.opacity = '1';
-            }, 50);
-            
-            // After transition completes, set the main background and remove the transition div
-            setTimeout(() => {
-                heroSection.style.backgroundImage = `url('${bgImages[currentImageIndex]}')`;
-                heroSection.removeChild(nextImageDiv);
-            }, 1600);
+
+            // Fade out the previous image
+            bgDivs[previousImageIndex].style.opacity = '0';
+
+            // Fade in the current image
+            bgDivs[currentImageIndex].style.opacity = '1';
         }
-        
+
         // Change background every 7 seconds
         setInterval(changeBackground, 7000);
+
+        // --- END: Revised Slideshow Logic ---
     }
-    
-    // Add overlay to hero section with reduced blur for better performance
+
+    // Ensure hero content is above the background layers
     const heroContent = document.querySelector('.hero-content');
     if (heroContent) {
-        heroContent.style.position = "relative";
-        heroContent.style.zIndex = "2";
+        heroContent.style.position = "relative"; // Make z-index apply
+        heroContent.style.zIndex = "1";        // Ensure it's above the z-index: 0 backgrounds
     }
-    
-    // Typing animation for personal notes
+
+    // Typing animation for personal notes (Keep as is)
     const noteContent = document.querySelector('.note-content p');
     if (noteContent) {
         const text = noteContent.textContent;
@@ -85,66 +85,70 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 50);
     }
 
-    // Fade in animation for newsletter
+    // Fade in animation for newsletter (Keep as is)
     const newsletterElements = document.querySelectorAll('.newsletter-content h3, .newsletter-content p');
     newsletterElements.forEach((el, index) => {
         setTimeout(() => {
             el.style.opacity = '1';
         }, index * 500 + 500);
     });
-    // Mobile menu functionality
+
+    // Mobile menu functionality (Keep as is)
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const mobileMenuContent = document.createElement('div');
-    mobileMenuContent.className = 'mobile-menu-content';
-    mobileMenuContent.innerHTML = `
-        <div class="mobile-logo">
-            <img src="Assets/Notebook logo.jpg" alt="thvlayu logo" style="width: 40px; height: 40px; border-radius: 4px; margin-right: 10px;">
-            <div>
-                <h3>thvlayu</h3>
-                <span>be delusional and do anything you want</span>
+    // Check if mobileMenuBtn exists before proceeding
+    if (mobileMenuBtn) {
+        const mobileMenuContent = document.createElement('div');
+        mobileMenuContent.className = 'mobile-menu-content';
+        mobileMenuContent.innerHTML = `
+            <div class="mobile-logo">
+                <img src="Assets/Notebook logo.jpg" alt="thvlayu logo" style="width: 40px; height: 40px; border-radius: 4px; margin-right: 10px;">
+                <div>
+                    <h3>thvlayu</h3>
+                    <span>be delusional and do anything you want</span>
+                </div>
             </div>
-        </div>
-        <ul>
-            <li><a href="#" class="active">Home</a></li>
-            <li><a href="#">Thoughts</a></li>
-            <li><a href="#">Projects</a></li>
-            <li><a href="#">Resources</a></li>
-            <li><a href="#">Contact</a></li>
-        </ul>
-    `;
-    document.body.appendChild(mobileMenuContent);
-    
-    // Create close button for mobile menu
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'close-menu-btn';
-    closeBtn.innerHTML = '&times;';
-    closeBtn.style.position = 'absolute';
-    closeBtn.style.top = '20px';
-    closeBtn.style.right = '20px';
-    closeBtn.style.background = 'none';
-    closeBtn.style.border = 'none';
-    closeBtn.style.fontSize = '24px';
-    closeBtn.style.cursor = 'pointer';
-    closeBtn.style.color = 'var(--text-color)';
-    mobileMenuContent.appendChild(closeBtn);
-    
-    const overlay = document.querySelector('.mobile-menu-overlay');
-    const hamburgerBtn = document.querySelector('.mobile-menu-btn');
-    
-    function toggleMenu() {
-        document.body.classList.toggle('menu-open');
-        mobileMenuContent.classList.toggle('menu-open');
-        overlay.classList.toggle('visible');
-        hamburgerBtn.classList.toggle('menu-open');
+            <ul>
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="#">Thoughts</a></li>
+                <li><a href="#">Projects</a></li>
+                <li><a href="#">Resources</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        `;
+        document.body.appendChild(mobileMenuContent);
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'close-menu-btn';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.style.position = 'absolute';
+        closeBtn.style.top = '20px';
+        closeBtn.style.right = '20px';
+        closeBtn.style.background = 'none';
+        closeBtn.style.border = 'none';
+        closeBtn.style.fontSize = '24px';
+        closeBtn.style.cursor = 'pointer';
+        closeBtn.style.color = 'var(--text-color)';
+        mobileMenuContent.appendChild(closeBtn);
+
+        const overlay = document.querySelector('.mobile-menu-overlay');
+        const hamburgerBtn = document.querySelector('.mobile-menu-btn'); // Re-select just in case
+
+        function toggleMenu() {
+            document.body.classList.toggle('menu-open');
+            mobileMenuContent.classList.toggle('menu-open');
+            if (overlay) overlay.classList.toggle('visible'); // Check if overlay exists
+            if (hamburgerBtn) hamburgerBtn.classList.toggle('menu-open'); // Check if hamburgerBtn exists
+        }
+
+        if (hamburgerBtn) hamburgerBtn.addEventListener('click', toggleMenu);
+        if (overlay) overlay.addEventListener('click', toggleMenu);
+        if (closeBtn) closeBtn.addEventListener('click', toggleMenu);
     }
-    
-    hamburgerBtn.addEventListener('click', toggleMenu);
-    overlay.addEventListener('click', toggleMenu);
-    closeBtn.addEventListener('click', toggleMenu);
-    
-    // Animate stats
+
+    // Animate stats (Keep as is)
     function animateValue(id, start, end, duration) {
         const obj = document.getElementById(id);
+        if (!obj) return; // Add check if element exists
         let startTimestamp = null;
         const step = (timestamp) => {
             if (!startTimestamp) startTimestamp = timestamp;
@@ -156,32 +160,24 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         window.requestAnimationFrame(step);
     }
-    
+
     animateValue("news-count", 0, 127, 2000);
     animateValue("update-frequency", 0, 24, 2000);
-    
-    // Fetch real trending topics from Google Trends API (mock implementation)
+
+    // Fetch real trending topics from Google Trends API (mock implementation) (Keep as is)
     async function fetchTrendingTopics() {
-        // In a real implementation, you would use the Google Trends API
-        // This is a mock implementation with sample data
         const mockTrends = [
-            "Generative AI",
-            "Quantum Computing",
-            "Neural Interfaces",
-            "Post-Capitalism",
-            "Climate Adaptation",
-            "Digital Minimalism",
-            "Web4 Concepts",
-            "Biohacking"
+            "Generative AI", "Quantum Computing", "Neural Interfaces",
+            "Post-Capitalism", "Climate Adaptation", "Digital Minimalism",
+            "Web4 Concepts", "Biohacking"
         ];
-        
         const topicsContainer = document.getElementById('trending-topics');
+        if (!topicsContainer) return; // Add check
+
         topicsContainer.innerHTML = '';
-        
-        // Shuffle and take first 5
         const shuffled = mockTrends.sort(() => 0.5 - Math.random());
         const selectedTrends = shuffled.slice(0, 5);
-        
+
         selectedTrends.forEach(trend => {
             const tag = document.createElement('span');
             tag.className = 'tag';
@@ -189,12 +185,12 @@ document.addEventListener('DOMContentLoaded', function() {
             topicsContainer.appendChild(tag);
         });
     }
-    
     fetchTrendingTopics();
-    
-    // Mock data for news items
-    // Limit news items to 3 per category
-const mockNewsData = [
+
+
+    // Mock data for news items (Keep as is)
+    const mockNewsData = [ /* ... your news data ... */ ];
+     mockNewsData = [
         {
             id: 1,
             title: "The Ethics of Artificial Consciousness",
@@ -244,19 +240,19 @@ const mockNewsData = [
             source: "Aesthetic Journal"
         }
     ];
-    
-    // Function to render news items
+
+
+    // Function to render news items (Keep as is, added checks)
     function renderNewsItems(items) {
         const newsGrid = document.querySelector('.news-grid');
+        if (!newsGrid) return; // Add check
         newsGrid.innerHTML = '';
-        
+
         items.forEach(item => {
             const newsItem = document.createElement('div');
             newsItem.className = 'news-item';
-            
-            // Determine category color
             let categoryClass = item.category;
-            
+
             newsItem.innerHTML = `
                 <div class="news-image">
                     <div class="news-category ${categoryClass}">${item.category.charAt(0).toUpperCase() + item.category.slice(1)}</div>
@@ -270,23 +266,26 @@ const mockNewsData = [
                     </div>
                 </div>
             `;
-            
             newsGrid.appendChild(newsItem);
         });
     }
-    
-    // Filter news items
+
+    // Filter news items (Keep as is, added checks)
     function filterNews() {
-        const categoryFilter = document.getElementById('category-filter').value;
-        const timeFilter = document.getElementById('time-filter').value;
-        
+        const categoryFilterEl = document.getElementById('category-filter');
+        const timeFilterEl = document.getElementById('time-filter');
+        if (!categoryFilterEl || !timeFilterEl) return; // Add check
+
+        const categoryFilter = categoryFilterEl.value;
+        const timeFilter = timeFilterEl.value;
+
         let filteredItems = [...mockNewsData];
-        
+
         // Apply category filter
         if (categoryFilter !== 'all') {
             filteredItems = filteredItems.filter(item => item.category === categoryFilter);
         }
-        
+
         // Apply time filter
         const now = new Date();
         if (timeFilter === 'today') {
@@ -299,82 +298,99 @@ const mockNewsData = [
             const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
             filteredItems = filteredItems.filter(item => new Date(item.date) >= oneMonthAgo);
         }
-        
+
         renderNewsItems(filteredItems);
     }
-    
+
     // Initialize with all news items
     renderNewsItems(mockNewsData);
-    
-    // Set up filter event listeners
-    document.getElementById('category-filter').addEventListener('change', filterNews);
-    document.getElementById('time-filter').addEventListener('change', filterNews);
-    
-    // Load more button functionality
-    document.querySelector('.load-more').addEventListener('click', function() {
-        // In a real app, this would fetch more data from an API
-        const currentCount = document.querySelectorAll('.news-item').length;
-        const newItems = mockNewsData.slice(currentCount, currentCount + 3);
-        
-        if (newItems.length > 0) {
+
+    // Set up filter event listeners (Keep as is, added checks)
+    const categoryFilterEl = document.getElementById('category-filter');
+    const timeFilterEl = document.getElementById('time-filter');
+    if (categoryFilterEl) categoryFilterEl.addEventListener('change', filterNews);
+    if (timeFilterEl) timeFilterEl.addEventListener('change', filterNews);
+
+    // Load more button functionality (Keep as is, added checks)
+    const loadMoreBtn = document.querySelector('.load-more');
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', function() {
             const newsGrid = document.querySelector('.news-grid');
-            
-            newItems.forEach(item => {
-                const newsItem = document.createElement('div');
-                newsItem.className = 'news-item';
-                
-                let categoryClass = item.category;
-                
-                newsItem.innerHTML = `
-                    <div class="news-image">
-                        <div class="news-category ${categoryClass}">${item.category.charAt(0).toUpperCase() + item.category.slice(1)}</div>
-                    </div>
-                    <div class="news-content">
-                        <h4>${item.title}</h4>
-                        <p>${item.excerpt}</p>
-                        <div class="news-meta">
-                            <span>${item.source}</span>
-                            <span>${new Date(item.date).toLocaleDateString()}</span>
+            if (!newsGrid) return; // Add check
+
+            const currentCount = newsGrid.querySelectorAll('.news-item').length;
+            const newItems = mockNewsData.slice(currentCount, currentCount + 3); // Ensure mockNewsData is accessible
+
+            if (newItems.length > 0) {
+                newItems.forEach(item => {
+                    const newsItem = document.createElement('div');
+                    newsItem.className = 'news-item';
+                    let categoryClass = item.category;
+                    newsItem.innerHTML = `
+                        <div class="news-image">
+                            <div class="news-category ${categoryClass}">${item.category.charAt(0).toUpperCase() + item.category.slice(1)}</div>
                         </div>
-                    </div>
-                `;
-                
-                newsGrid.appendChild(newsItem);
-            });
-            
-            if (currentCount + newItems.length >= mockNewsData.length) {
+                        <div class="news-content">
+                            <h4>${item.title}</h4>
+                            <p>${item.excerpt}</p>
+                            <div class="news-meta">
+                                <span>${item.source}</span>
+                                <span>${new Date(item.date).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                    `;
+                    newsGrid.appendChild(newsItem);
+                });
+
+                if (newsGrid.querySelectorAll('.news-item').length >= mockNewsData.length) {
+                    this.style.display = 'none';
+                }
+            } else {
                 this.style.display = 'none';
             }
-        } else {
-            this.style.display = 'none';
+        });
+         // Hide button initially if not enough items
+         if (newsGrid.querySelectorAll('.news-item').length >= mockNewsData.length) {
+            loadMoreBtn.style.display = 'none';
         }
-    });
-    
-    // Newsletter form submission
+    }
+
+
+    // Newsletter form submission (Keep as is, added checks)
     const newsletterForm = document.getElementById('newsletter-form');
     const formMessage = document.getElementById('form-message');
-    
-    newsletterForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const email = document.getElementById('email').value;
-        const feedback = document.getElementById('feedback').value;
-        
-        // Simple validation
-        if (!email) {
-            formMessage.textContent = 'Please enter your email address.';
-            formMessage.className = 'form-message error';
-            return;
-        }
-        
-        // Simulate successful submission
-        formMessage.textContent = 'Thank you for tuning in. Your frequency has been noted.';
-        formMessage.className = 'form-message success';
-        
-        // Reset form
-        newsletterForm.reset();
-        
-        // Log the data (in real implementation, send to server)
-        console.log('Newsletter submission:', { email, feedback });
-    });
+
+    if (newsletterForm && formMessage) { // Add check
+        newsletterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const emailEl = document.getElementById('email');
+            const feedbackEl = document.getElementById('feedback');
+            if (!emailEl) return; // Add check
+
+            const email = emailEl.value;
+            const feedback = feedbackEl ? feedbackEl.value : ''; // Check if feedback exists
+
+            if (!email) {
+                formMessage.textContent = 'Please enter your email address.';
+                formMessage.className = 'form-message error visible'; // Ensure visibility
+                return;
+            }
+
+            formMessage.textContent = 'Thank you for tuning in. Your frequency has been noted.';
+            formMessage.className = 'form-message success visible'; // Ensure visibility
+
+            newsletterForm.reset();
+
+            // Remove message after a delay
+            setTimeout(() => {
+                formMessage.textContent = '';
+                formMessage.className = 'form-message';
+            }, 5000);
+
+
+            console.log('Newsletter submission:', { email, feedback });
+        });
+    }
+
 });
