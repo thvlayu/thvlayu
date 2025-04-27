@@ -1,4 +1,21 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Set hero background image with minimal blur
+    const heroSection = document.querySelector('.hero');
+    if (heroSection) {
+        heroSection.style.backgroundImage = "url('Assets/main.jpg')";
+        heroSection.style.backgroundSize = "cover";
+        heroSection.style.backgroundPosition = "center";
+        heroSection.style.position = "relative";
+        heroSection.style.marginTop = "1.5rem";
+    }
+    
+    // Add overlay to hero section
+    const heroContent = document.querySelector('.hero-content');
+    if (heroContent) {
+        heroContent.style.position = "relative";
+        heroContent.style.zIndex = "2";
+    }
+    
     // Typing animation for personal notes
     const noteContent = document.querySelector('.note-content p');
     if (noteContent) {
@@ -29,8 +46,11 @@ document.addEventListener('DOMContentLoaded', function() {
     mobileMenuContent.className = 'mobile-menu-content';
     mobileMenuContent.innerHTML = `
         <div class="mobile-logo">
-            <h3>thvlayu</h3>
-            <span>be delusional and do anything you want</span>
+            <img src="Assets/Notebook logo.jpg" alt="thvlayu logo" style="width: 40px; height: 40px; border-radius: 4px; margin-right: 10px;">
+            <div>
+                <h3>thvlayu</h3>
+                <span>be delusional and do anything you want</span>
+            </div>
         </div>
         <ul>
             <li><a href="#" class="active">Home</a></li>
@@ -41,6 +61,20 @@ document.addEventListener('DOMContentLoaded', function() {
         </ul>
     `;
     document.body.appendChild(mobileMenuContent);
+    
+    // Create close button for mobile menu
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'close-menu-btn';
+    closeBtn.innerHTML = '&times;';
+    closeBtn.style.position = 'absolute';
+    closeBtn.style.top = '20px';
+    closeBtn.style.right = '20px';
+    closeBtn.style.background = 'none';
+    closeBtn.style.border = 'none';
+    closeBtn.style.fontSize = '24px';
+    closeBtn.style.cursor = 'pointer';
+    closeBtn.style.color = 'var(--text-color)';
+    mobileMenuContent.appendChild(closeBtn);
     
     const overlay = document.querySelector('.mobile-menu-overlay');
     const hamburgerBtn = document.querySelector('.mobile-menu-btn');
@@ -54,6 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     hamburgerBtn.addEventListener('click', toggleMenu);
     overlay.addEventListener('click', toggleMenu);
+    closeBtn.addEventListener('click', toggleMenu);
     
     // Animate stats
     function animateValue(id, start, end, duration) {
