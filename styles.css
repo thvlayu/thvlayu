@@ -223,10 +223,16 @@ a {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(238, 234, 223, 0.7);
-    backdrop-filter: blur(0.5px);
+    background-color: rgba(238, 234, 223, 0.6);
+    backdrop-filter: blur(0.3px);
     border-radius: 8px;
     z-index: 1;
+}
+
+/* Background transition styling */
+.hero-bg-transition {
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .hero-content {

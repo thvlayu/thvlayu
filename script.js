@@ -1,15 +1,67 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Set hero background image with minimal blur
+    // Set up background slideshow for hero section
     const heroSection = document.querySelector('.hero');
     if (heroSection) {
-        heroSection.style.backgroundImage = "url('Assets/main.jpg')";
+        // Background images array
+        const bgImages = [
+            "Assets/bg0.jpeg",
+            "Assets/bg1.jpeg",
+            "Assets/bg2.jpeg",
+            "Assets/bg3.jpeg",
+            "Assets/bg4.jpeg",
+            "Assets/bg5.jpeg",
+            "Assets/bg6.jpeg"
+        ];
+        
+        let currentImageIndex = 0;
+        
+        // Set initial background image
+        heroSection.style.backgroundImage = `url('${bgImages[0]}')`;  // Start with bg0
         heroSection.style.backgroundSize = "cover";
         heroSection.style.backgroundPosition = "center";
         heroSection.style.position = "relative";
         heroSection.style.marginTop = "1.5rem";
+        heroSection.style.transition = "background-image 2.5s ease-in-out";
+        
+        // Create background slideshow
+        function changeBackground() {
+            currentImageIndex = (currentImageIndex + 1) % bgImages.length;
+            
+            // Create a new div for the next image to enable crossfade
+            const nextImageDiv = document.createElement('div');
+            nextImageDiv.className = 'hero-bg-transition';
+            nextImageDiv.style.backgroundImage = `url('${bgImages[currentImageIndex]}')`;  
+            nextImageDiv.style.position = 'absolute';
+            nextImageDiv.style.top = '0';
+            nextImageDiv.style.left = '0';
+            nextImageDiv.style.width = '100%';
+            nextImageDiv.style.height = '100%';
+            nextImageDiv.style.backgroundSize = 'cover';
+            nextImageDiv.style.backgroundPosition = 'center';
+            nextImageDiv.style.opacity = '0';
+            nextImageDiv.style.transition = 'opacity 1.5s ease-in-out';
+            nextImageDiv.style.zIndex = '0';
+            
+            // Add the new div to hero section
+            heroSection.appendChild(nextImageDiv);
+            
+            // Fade in the new image
+            setTimeout(() => {
+                nextImageDiv.style.opacity = '1';
+            }, 50);
+            
+            // After transition completes, set the main background and remove the transition div
+            setTimeout(() => {
+                heroSection.style.backgroundImage = `url('${bgImages[currentImageIndex]}')`;
+                heroSection.removeChild(nextImageDiv);
+            }, 1600);
+        }
+        
+        // Change background every 7 seconds
+        setInterval(changeBackground, 7000);
     }
     
-    // Add overlay to hero section
+    // Add overlay to hero section with reduced blur for better performance
     const heroContent = document.querySelector('.hero-content');
     if (heroContent) {
         heroContent.style.position = "relative";
