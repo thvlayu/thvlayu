@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, index * 500 + 500);
     });
     // Mobile menu functionality
-    const mobileMenuBtn = document.querySelector('.mobileMenuBtn');
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     const mobileMenuContent = document.createElement('div');
     mobileMenuContent.className = 'mobile-menu-content';
     mobileMenuContent.innerHTML = `

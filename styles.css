@@ -1,7 +1,7 @@
 /* Base Styles */
 :root {
-    --primary-color: #f5f5f5;
-    --secondary-color: #ffffff;
+    --primary-color: #F1EDE7;
+    --secondary-color: #F1EDE7;
     --accent-color: #e8e8e8;
     --text-color: #333333;
     --text-light: #666666;
@@ -26,7 +26,6 @@ body {
 }
 
 body.menu-open {
-    transform: translateX(var(--menu-width));
     overflow: hidden;
 }
 
@@ -69,7 +68,7 @@ a {
 /* Header Styles */
 .main-header {
     background-color: var(--secondary-color);
-    padding: 0.8rem 0;
+    padding: 0.5rem 0;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 0;
@@ -77,19 +76,21 @@ a {
 }
 
 .logo h1 {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     letter-spacing: 1px;
     color: var(--text-color);
     margin: 0;
     line-height: 1.2;
+    font-family: 'Tiempos Headline', serif;
 }
 
 .logo span {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     color: var(--text-light);
     display: block;
-    margin-top: 0;
+    margin-top: 2px;
     letter-spacing: 0.5px;
+    font-family: 'Tiempos Text', serif;
 }
 
 .main-nav ul {
@@ -126,13 +127,13 @@ a {
 
 /* Mobile Menu Styles */
 .mobile-menu-btn {
-    display: none;
+    display: flex;
     background: none;
     border: none;
     cursor: pointer;
     padding: 0.5rem;
-    margin-left: auto;
-    margin-right: 0;
+    margin-left: 0;
+    margin-right: 1rem;
     flex-direction: column;
     justify-content: space-between;
     width: 30px;
@@ -155,7 +156,7 @@ a {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(241, 237, 231, 0.8);
     backdrop-filter: blur(5px);
     z-index: 98;
     opacity: 0;
@@ -183,10 +184,11 @@ a {
 
 /* Hero Section */
 .hero {
-    background-color: var(--accent-color);
+    background-color: var(--primary-color);
     padding: 3rem 0;
     margin-bottom: 3rem;
     border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .hero-content {
@@ -433,10 +435,11 @@ a {
 
 /* Personal Notes Section */
 .personal-notes {
-    background-color: var(--accent-color);
+    background-color: var(--primary-color);
     padding: 2rem;
     border-radius: 8px;
     margin-bottom: 3rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .personal-notes h3 {
@@ -513,10 +516,11 @@ a {
 
 /* Newsletter Section */
 .newsletter-section {
-    background-color: var(--accent-color);
+    background-color: var(--primary-color);
     padding: 3rem 0;
     border-radius: 8px;
     margin-bottom: 4rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .newsletter-content {
@@ -660,15 +664,16 @@ a {
 .mobile-menu-content {
     position: fixed;
     top: 0;
-    left: 0;
+    right: 0;
     width: var(--menu-width);
     height: 100%;
     background-color: var(--secondary-color);
     z-index: 99;
-    transform: translateX(-100%);
+    transform: translateX(100%);
     transition: transform 0.3s ease;
     padding: 2rem;
     overflow-y: auto;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .mobile-menu-content.menu-open {
@@ -695,6 +700,19 @@ a {
     position: relative;
 }
 
+.mobile-menu-content .mobile-logo h3 {
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+    font-family: 'Tiempos Headline', serif;
+}
+
+.mobile-menu-content .mobile-logo span {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    font-family: 'Tiempos Text', serif;
+}
+
 .mobile-menu-content a.active::after {
     content: '';
     position: absolute;
@@ -710,10 +728,16 @@ a {
     .main-header .container {
         display: flex;
         align-items: center;
+        justify-content: space-between;
     }
 
     .logo {
-        flex-grow: 1;
+        flex-grow: 0;
+    }
+    
+    .mobile-menu-btn {
+        order: 2;
+        margin-left: auto;
     }
 
     .main-nav ul {
