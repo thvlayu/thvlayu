@@ -179,8 +179,8 @@ a {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(238, 234, 223, 0.9);
-    backdrop-filter: blur(8px);
+    background-color: rgba(238, 234, 223, 0.7); /* Increased transparency */
+    backdrop-filter: blur(4px); /* Reduced blur */
     z-index: 98;
     opacity: 0;
     visibility: hidden;
@@ -214,6 +214,10 @@ a {
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     position: relative;
+    min-height: 500px; /* Ensure hero has consistent min height */
+    display: flex; /* Use flexbox for alignment */
+    align-items: center; /* Center content vertically */
+    justify-content: flex-start; /* Align content to the left */
 }
 
 .hero::before {
@@ -223,8 +227,8 @@ a {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(238, 234, 223, 0.6);
-    backdrop-filter: blur(0.3px);
+    /*background-color: rgba(238, 234, 223, 0.6);*/
+    /*backdrop-filter: blur(0.3px);*/
     border-radius: 8px;
     z-index: 1;
 }
@@ -237,7 +241,6 @@ a {
 
 .hero-content {
     max-width: 800px;
-    margin: 0 auto;
     text-align: center;
     position: relative;
     z-index: 2;
@@ -307,185 +310,162 @@ a {
     color: var(--text-light);
 }
 
-/* Trending Topics */
-.trending-topics {
-    margin-bottom: 3rem;
+/* Style for the standard hero content wrapper */
+.hero-standard-content {
+    /* Add transitions if desired */
+    transition: opacity 0.5s ease-in-out;
+    display: none; /* Hide the standard template content */
 }
 
-.trending-topics h3 {
-    font-size: 1.3rem;
-    margin-bottom: 1.2rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+/* Style for the new quote box */
+.hero-quote-box {
+    background-color: rgba(238, 234, 223, 0.85); /* Semi-transparent background */
+    backdrop-filter: blur(5px); /* Optional blur effect */
+    padding: 2rem 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 450px; /* Adjust width as needed */
+    margin-right: auto;
+    margin-left: 10%; /* Adjust left margin for spacing */
+    text-align: left;
+    transition: opacity 0.5s ease-in-out;
 }
 
-.topic-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.8rem;
-}
-
-.tag {
-    background-color: var(--secondary-color);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
-
-.tag:hover {
-    background-color: var(--highlight-color);
-    transform: translateY(-2px);
-}
-
-.tag-skeleton {
-    background-color: var(--accent-color);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    width: 100px;
-    height: 32px;
-}
-
-/* News Feed */
-.news-feed {
-    margin-bottom: 4rem;
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.section-header h3 {
-    font-size: 1.3rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.filter-options {
-    display: flex;
-    gap: 1rem;
-}
-
-.filter-options select {
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background-color: var(--secondary-color);
-    font-family: 'Tiempos Text', serif;
-    cursor: pointer;
-    font-size: 0.9rem;
-}
-
-.news-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
-}
-
-.news-item {
-    background-color: var(--secondary-color);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s, box-shadow 0.3s;
-    display: none;
-}
-
-.news-item:nth-child(-n+3) {
-    display: block;
-}
-
-.news-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.news-image {
-    height: 180px;
-    background-color: var(--accent-color);
-    position: relative;
-    overflow: hidden;
-}
-
-.news-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.news-category {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: var(--secondary-color);
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 500;
-}
-
-.news-content {
-    padding: 1.5rem;
-}
-
-.news-content h4 {
-    font-size: 1.1rem;
-    margin-bottom: 0.8rem;
-    line-height: 1.4;
-}
-
-.news-content p {
-    color: var(--text-light);
-    font-size: 0.9rem;
+.hero-quote-box blockquote p {
+    font-size: 1.2rem; /* Adjust quote font size */
+    font-style: italic;
+    color: var(--text-color);
     margin-bottom: 1rem;
+    line-height: 1.6;
 }
 
-.news-meta {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.8rem;
+.hero-quote-box blockquote footer {
+    font-size: 0.9rem;
     color: var(--text-light);
+    text-align: right;
 }
 
-.load-more {
-    display: block;
-    margin: 3rem auto 0;
-    padding: 0.8rem 2rem;
-    background-color: var(--text-color);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-family: 'Tiempos Text', serif;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
+/* Utility class to hide elements */
+.hidden {
+    display: none !important; /* Ensure this overrides other display properties */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out, visibility 0s 0.5s;
 }
 
-.load-more:hover {
-    background-color: #222;
+/* Styling for content specific to certain backgrounds */
+.hero-specific-content {
+    position: absolute;
+    z-index: 2; /* Ensure it's above the background images */
+    background-color: rgba(238, 234, 223, 0.85); /* Similar to quote box */
+    backdrop-filter: blur(5px);
+    padding: 1.5rem 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    opacity: 0; /* Start hidden for transition */
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out, visibility 0s 0.5s;
+    max-width: 300px; /* Adjust as needed */
 }
 
-.loading-spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid var(--accent-color);
-    border-top-color: var(--text-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 2rem auto;
-    grid-column: 1 / -1;
+#hero-poem-content {
+    top: 10%;
+    right: 5%;
+    text-align: right;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
+#hero-haiku-content {
+    bottom: 10%;
+    left: 5%;
+    text-align: left;
+}
+
+.hero-specific-content p {
+    font-size: 1rem; /* Adjust as needed */
+    color: var(--text-color);
+    line-height: 1.6;
+    margin-bottom: 0.8rem; /* Spacing between lines/paragraphs */
+}
+
+.hero-specific-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* Ensure content appears when not hidden */
+.hero-specific-content:not(.hidden) {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* --- Styles for BG2 Elements --- */
+
+.hero-bg2-element {
+    background-color: rgba(255, 255, 255, 0.1); /* Very subtle background */
+    backdrop-filter: blur(10px); /* Increased blur */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+    color: var(--primary-color); /* Light text color for contrast */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Soft shadow for readability */
+}
+
+/* Calendar Styling */
+#hero-calendar-content {
+    top: 15%;
+    left: 5%;
+    width: 150px; /* Fixed width */
+    height: 150px; /* Fixed height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    border-radius: 12px;
+}
+
+#calendar-month {
+    font-size: 1.2rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+}
+
+#calendar-day {
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* Clock/Date/Reminder Widget Styling */
+#hero-clock-widget {
+    top: 15%;
+    right: 5%;
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    text-align: right;
+    max-width: none; /* Allow flexible width */
+}
+
+#clock-time {
+    font-size: 2.8rem; /* Larger time */
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 0.3rem;
+}
+
+#clock-date {
+    font-size: 1.1rem;
+    font-weight: 500;
+    opacity: 0.9;
+    margin-bottom: 1.2rem; /* Space before reminder */
+    letter-spacing: 0.5px;
+}
+
+#reminder-text {
+    font-size: 0.95rem;
+    font-style: italic;
+    opacity: 0.8;
 }
 
 /* Personal Notes Section */
@@ -495,6 +475,8 @@ a {
     border-radius: 8px;
     margin-bottom: 3rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    background-color: var(--text-color);
+    color: var(--secondary-color);
 }
 
 .personal-notes h3 {
@@ -760,6 +742,8 @@ a {
     position: relative;
 }
 
+/* Commenting out unused styles for the removed mobile logo */
+/*
 .mobile-menu-content .mobile-logo {
     display: flex;
     align-items: center;
@@ -779,6 +763,7 @@ a {
     color: var(--text-light);
     font-family: 'Tiempos Text', serif;
 }
+*/
 
 .mobile-menu-content a.active::after {
     content: '';
@@ -882,3 +867,653 @@ a {
         grid-template-columns: 1fr;
     }
 }
+
+/* Featured Insight Section Styles */
+.featured-insight {
+    background-color: var(--secondary-color); /* Use secondary color for background */
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 2rem 2.5rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.featured-insight::before {
+    content: '\f0eb'; /* FontAwesome lightbulb icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900; /* Ensure solid icon */
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    font-size: 6rem;
+    color: var(--primary-color);
+    opacity: 0.6;
+    transform: rotate(-15deg);
+    z-index: 0;
+}
+
+.featured-insight h4 {
+    font-family: 'Tiempos Headline', serif;
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative; /* Ensure it's above the pseudo-element */
+    z-index: 1;
+}
+
+.insight-content blockquote {
+    font-family: 'Tiempos Text', serif;
+    font-size: 1.25rem;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--text-color);
+    max-width: 700px;
+    margin: 0 auto 1.5rem auto;
+    position: relative; /* Ensure it's above the pseudo-element */
+    z-index: 1;
+}
+
+.insight-link {
+    display: inline-block;
+    font-family: 'Tiempos Text', serif;
+    font-weight: 700;
+    color: var(--text-color);
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--text-color);
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+    position: relative; /* Ensure it's above the pseudo-element */
+    z-index: 1;
+}
+
+.insight-link:hover {
+    background-color: var(--text-color);
+    color: var(--secondary-color);
+}
+
+/* === Train Station Square Styles === */
+.pixel-art-section {
+    font-family: 'Press Start 2P', cursive; /* Suggesting a pixel font */
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    margin-bottom: 3rem;
+    /* background-color: #a0a0a0; Removed placeholder background */
+    /* border: 4px solid #333; Removed pixel border */
+    /* padding: 10px; Removed padding */
+    /* box-shadow: 6px 6px 0px #555; Removed shadow */
+    position: relative; /* Needed for absolute positioning inside */
+    overflow: hidden; /* Hide train when off-screen */
+    width: 100%; /* Make section full width */
+    margin-left: auto; /* Center if max-width is set */
+    margin-right: auto; /* Center if max-width is set */
+    max-width: 1200px; /* Use the same max-width as .container */
+    padding: 0; /* Remove padding */
+    border: none; /* Remove border */
+    box-shadow: none; /* Remove shadow */
+}
+
+.station-backdrop {
+    position: relative;
+    width: 100%;
+    padding-bottom: 50%; /* Maintain aspect ratio (e.g., 2:1). Adjust % if needed based on image dimensions */
+    background-image: url('Assets/station.png'); /* Updated path if needed */
+    background-size: cover; /* Cover the container */
+    background-repeat: no-repeat;
+    background-position: center 85%; /* Position image slightly up from bottom */
+    /* border: 2px solid #333; Remove border */
+    /* Add top fade effect only */
+    mask-image: linear-gradient(to bottom, transparent 0%, black 20%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%);
+    border-radius: 10px; /* Add rounded corners */
+    overflow: hidden; /* Ensure background respects border-radius */
+}
+
+/*
+#departure-board {
+    position: absolute;
+    top: 55px;
+    left: 315px;
+    color: #0f0;
+    padding: 5px;
+    font-size: 10px;
+    line-height: 1.4;
+    width: 220px;
+    height: 70px;
+    z-index: 10;
+    white-space: pre-wrap;
+}
+
+#departure-board p {
+    margin: 0 0 5px 0;
+    font-family: 'Press Start 2P', cursive;
+}
+*/
+
+/*
+#ticket-counter {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    width: 80px;
+    height: 100px;
+    background-image: url('Assets/ticket-counter.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-color: #774422;
+    border: 3px solid #331100;
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.1s ease;
+}
+
+#ticket-counter:hover {
+    transform: scale(1.05);
+}
+*/
+
+.track-area {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 80px; /* Height of the track/platform area */
+    /* Add track graphics if needed */
+}
+
+#train {
+    position: absolute;
+    bottom: -29px; /* Position on the track */
+    left: -1500px; /* Start fully off-screen left */
+    width: 1500px; /* Adjusted train size */
+    height: 450px; /* Adjusted train size */
+    background-image: url('Assets/red-train.png'); /* Updated train image path */
+    background-size: contain;
+    background-repeat: no-repeat;
+    /* background-color: #cc0000; Removed Placeholder color */
+    /* border: 3px solid #550000; Removed border */
+    border: none; /* Remove border */
+    z-index: 5;
+    transition: transform 2.5s linear, opacity 0.5s ease; /* Smooth movement & fade - Changed timing to linear */
+    display: block; /* Override .hidden display:none if needed during transition */
+    opacity: 1; /* Override .hidden opacity:0 if needed */
+    /* Stabilize rendering */
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    will-change: transform, opacity; /* Add optimization hint */
+}
+
+#train:hover #get-in-btn {
+    /* Show button when hovering over the train */
+    /* display: block; REMOVE */
+    opacity: 1;
+    visibility: visible; /* ADD */
+}
+
+#train.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0s 0.5s, transform 2.5s linear; /* Smooth movement & fade - Changed timing to linear */
+}
+
+#train.arriving {
+    /* Move train partially onto screen. Start left edge is at -1500px. Move 1400px */
+    transform: translateX(890px);
+}
+
+#train.departing {
+    /* Move train fully off screen to the right. From arrival (1500px), move past the 1200px container width. Needs ~1500 + 1200 = 2700px total */
+    transform: translateX(2700px);
+}
+
+#get-in-btn {
+    position: absolute;
+    bottom: 40%;
+    left: 52.8%;
+    transform: translateX(-50%);
+    padding: 10px 15px; /* Slightly smaller padding */
+    background-color: #eee;
+    color: #333;
+    border: 2px solid #555;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px #888;
+    /* display: none; REMOVE */
+    opacity: 0;    /* Hide by default */
+    visibility: hidden; /* ADD */
+    transition: opacity 0.2s ease, visibility 0s 0.2s; /* Adjust transition */
+}
+
+/* ADD FADE OUT STYLE - Increase specificity */
+#train #get-in-btn.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s 0.3s;
+}
+
+#get-in-btn.hidden {
+    /* Keep this rule for JS potentially forcing hide, though hover is primary */
+    display: none; /* Keep display:none here for JS override if needed */
+    opacity: 0;
+}
+
+#get-in-btn:active {
+    transform: translate(-48%, 2px);
+    box-shadow: 0px 0px 0px #888;
+}
+
+/*
+#ticket-modal {
+    position: fixed; // Display over everything
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 400px;
+    background-color: #e0e0e0;
+    border: 4px solid #333;
+    box-shadow: 6px 6px 0px #555;
+    padding: 20px;
+    z-index: 101;
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+}
+
+#ticket-modal.hidden {
+    display: none;
+}
+
+#ticket-modal h4 {
+    font-size: 14px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+#ticket-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+#ticket-list li {
+    margin-bottom: 10px;
+}
+
+#ticket-list a {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #44aaff;
+    color: #fff;
+    border: 2px solid #2266aa;
+    text-decoration: none;
+    font-size: 10px;
+    box-shadow: 3px 3px 0px #2266aa;
+    transition: all 0.1s ease;
+}
+
+#ticket-list a:hover {
+    background-color: #66ccff;
+}
+
+#ticket-list a:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #2266aa;
+}
+
+#close-ticket-modal {
+    padding: 8px 15px;
+    background-color: #ff6655;
+    color: #fff;
+    border: 2px solid #aa3322;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #aa3322;
+    transition: all 0.1s ease;
+}
+
+#close-ticket-modal:hover {
+    background-color: #ff8877;
+}
+
+#close-ticket-modal:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #aa3322;
+}
+*/
+
+/* Add reference to pixel font if needed - Requires importing the font */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* === New Personal Annotation Box Styles === */
+.personal-annotation-box {
+    position: relative; /* Needed for pseudo-element positioning */
+    padding: 2.5rem 3rem; /* Adjust padding as needed */
+    margin-bottom: 3rem; /* Spacing below the box */
+    border-radius: 15px; /* Rounded corners like prototype */
+    overflow: hidden; /* Keep gradient and glow contained */
+    background-size: 400% 400%; /* Size for gradient animation */
+    animation: gradientBG 15s ease infinite; /* Background animation */
+    color: #000000; /* Set text to pure black */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+
+/* Animated Gradient Background */
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.personal-annotation-box {
+    /* Apply the gradient from the example image */
+    /* Update: Use soft white, beige, off-white, cream, white gradient */
+    background-image: linear-gradient(45deg,
+        #F8F8F8, /* Soft white */
+        #F5F5DC, /* Beige */
+        #FAF0E6, /* Off white (Linen) */
+        #FFFDD0, /* Cream */
+        #FFFFFF, /* White */
+        #FFFDD0, /* Cream */
+        #FAF0E6, /* Off white (Linen) */
+        #F5F5DC  /* Beige */
+    );
+}
+
+/* Glowing Outline Effect */
+.personal-annotation-box::before {
+    content: '';
+    position: absolute;
+    top: -3px; left: -3px; right: -3px; bottom: -3px; /* Position around the box */
+    border-radius: 18px; /* Slightly larger radius than the box */
+    background: conic-gradient(
+        #000000, /* Black */
+        #0000FF, /* Blue */
+        #FFFFFF, /* White */
+        #0000FF, /* Blue */
+        #000000  /* Black */
+    );
+    z-index: -1; /* Place behind the content */
+    animation: rotateGlow 8s linear infinite; /* Rotation animation */
+}
+
+@keyframes rotateGlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.annotation-title {
+    font-family: 'Tiempos Headline', serif; /* As specified */
+    font-size: 1.4rem; /* Adjust size as needed */
+    margin-bottom: 1rem;
+    text-align: left; /* Match prototype */
+    color: #000000; /* Set text to pure black */
+}
+
+.annotation-text {
+    font-family: 'Tiempos Text', serif; /* As specified */
+    font-size: 1.1rem; /* Adjust size */
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    font-style: italic; /* Match previous style if desired */
+    color: #000000; /* Set text to pure black */
+}
+
+.annotation-signature {
+    font-family: 'Tiempos Text', serif; /* As specified */
+    font-size: 0.9rem;
+    text-align: right; /* Match prototype */
+    color: #000000; /* Set text to pure black */
+}
+/* === End New Personal Annotation Box Styles === */
+
+/* === Redirect Overlay Styles === REMOVE START
+#redirect-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('Assets/Destiny.jpg');
+    background-size: cover;
+    background-position: center;
+    z-index: 1000; // Ensure it's above everything
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out, visibility 0s 0.5s;
+}
+
+#redirect-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease-in-out;
+}
+REMOVE END */
+
+/* === Departure Blur Overlay Styles === ADD START */
+#departure-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2); /* Subtle dark overlay */
+    backdrop-filter: blur(0px); /* Start with no blur */
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out, backdrop-filter 0.5s ease-in-out, visibility 0s 0.5s;
+}
+
+#departure-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+    backdrop-filter: blur(8px); /* Apply blur */
+    transition: opacity 0.5s ease-in-out, backdrop-filter 0.5s ease-in-out;
+}
+/* === End Departure Blur Overlay Styles === ADD END */
+
+/* === Media Queries for Responsiveness === */
+@media (max-width: 768px) {
+    /* Adjust train size and position for smaller screens */
+    #train {
+        width: 450px;  /* Further reduced width */
+        height: 135px; /* Further reduced height (maintaining aspect ratio) */
+        bottom: -10px; /* Slightly adjusted bottom position */
+        left: -450px; /* Start off-screen based on new width */
+    }
+
+    /* Adjust train movement for smaller screens */
+    #train.arriving {
+        /* Move train partially onto smaller screen */
+        transform: translateX(400px); /* Adjusted arrival distance */
+    }
+
+    #train.departing {
+        /* Move train fully off smaller screen to the right */
+        transform: translateX(1200px); /* Adjusted departure distance */
+    }
+
+    /* Make button always visible and reposition on smaller train */
+    #get-in-btn {
+        opacity: 1;
+        visibility: visible;
+        bottom: 30%; /* Adjusted vertical position */
+        left: 50%;   /* Centered horizontally */
+        font-size: 12px; /* Slightly smaller font */
+        padding: 8px 12px; /* Slightly smaller padding */
+        /* Override hover display logic from desktop */
+        transition: none; /* Remove transition that might interfere */
+    }
+
+    /* Ensure hover doesn't hide the button on mobile */
+    #train:hover #get-in-btn {
+        opacity: 1; /* Keep it visible */
+        visibility: visible;
+    }
+
+    #get-in-btn:active {
+        /* Adjust active state slightly if needed */
+        transform: translate(-50%, 2px); /* Adjust for centered position */
+    }
+}
+
+/*
+#ticket-modal {
+    position: fixed; // Display over everything
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 400px;
+    background-color: #e0e0e0;
+    border: 4px solid #333;
+    box-shadow: 6px 6px 0px #555;
+    padding: 20px;
+    z-index: 101;
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+}
+
+#ticket-modal.hidden {
+    display: none;
+}
+
+#ticket-modal h4 {
+    font-size: 14px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+#ticket-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+#ticket-list li {
+    margin-bottom: 10px;
+}
+
+#ticket-list a {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #44aaff;
+    color: #fff;
+    border: 2px solid #2266aa;
+    text-decoration: none;
+    font-size: 10px;
+    box-shadow: 3px 3px 0px #2266aa;
+    transition: all 0.1s ease;
+}
+
+#ticket-list a:hover {
+    background-color: #66ccff;
+}
+
+#ticket-list a:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #2266aa;
+}
+
+#close-ticket-modal {
+    padding: 8px 15px;
+    background-color: #ff6655;
+    color: #fff;
+    border: 2px solid #aa3322;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #aa3322;
+    transition: all 0.1s ease;
+}
+
+#close-ticket-modal:hover {
+    background-color: #ff8877;
+}
+
+#close-ticket-modal:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #aa3322;
+}
+*/
+
+/* === Train Station Square Styles === */
+.pixel-art-section {
+    font-family: 'Press Start 2P', cursive; /* Suggesting a pixel font */
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    margin-bottom: 3rem;
+    /* background-color: #a0a0a0; Removed placeholder background */
+    /* border: 4px solid #333; Removed pixel border */
+    /* padding: 10px; Removed padding */
+    /* box-shadow: 6px 6px 0px #555; Removed shadow */
+    position: relative; /* Needed for absolute positioning inside */
+    overflow: hidden; /* Hide train when off-screen */
+    width: 100%; /* Make section full width */
+    margin-left: auto; /* Center if max-width is set */
+    margin-right: auto; /* Center if max-width is set */
+    max-width: 1200px; /* Use the same max-width as .container */
+    padding: 0; /* Remove padding */
+    border: none; /* Remove border */
+    box-shadow: none; /* Remove shadow */
+}
+
+.station-backdrop {
+    position: relative;
+    width: 100%;
+    padding-bottom: 50%; /* Maintain aspect ratio (e.g., 2:1). Adjust % if needed based on image dimensions */
+    background-image: url('Assets/station.png'); /* Updated path if needed */
+    background-size: cover; /* Cover the container */
+    background-repeat: no-repeat;
+    background-position: center 85%; /* Position image slightly up from bottom */
+    /* border: 2px solid #333; Remove border */
+    /* Add top fade effect only */
+    mask-image: linear-gradient(to bottom, transparent 0%, black 20%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%);
+    border-radius: 10px; /* Add rounded corners */
+    overflow: hidden; /* Ensure background respects border-radius */
+}
+
+/* ADD START: Seven Segment Display Styles */
+#seven-segment-display {
+    position: absolute;
+    top: 19.1%; /* Adjusted: Lowered position using percentage */
+    left: 67.4%; /* Kept centered horizontally */
+    transform: translateX(-50%);
+    width: 260px; /* Adjusted: Reduced width */
+    /* background-color: #1a1a1a; Removed: Use image background */
+    color: #ff9900; /* Amber/Orange color */
+    font-family: 'Press Start 2P', cursive; /* Pixel font */
+    font-size: 10px; /* Adjusted: Slightly smaller font */
+    padding: 8px 12px; /* Adjusted padding */
+    /* border: 2px solid #333; Removed: Use image border */
+    /* box-shadow: inset 0 0 6px rgba(0,0,0,0.5), 0 1px 3px rgba(0,0,0,0.3); Removed: No background */
+    text-align: center;
+    z-index: 10;
+    border-radius: 5px; /* Keep for potential layout influence */
+    line-height: 1.6;
+    text-shadow: 0 0 3px rgba(255, 153, 0, 0.5); /* Subtle glow */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 50px; /* Ensure minimum height */
+}
+
+#seven-segment-display span {
+    display: block;
+    white-space: nowrap; /* Prevent wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Add ellipsis if text overflows */
+}
+/* ADD END: Seven Segment Display Styles */
+
+/*
+#departure-board {
+
+</code_block_to_apply_changes_from>

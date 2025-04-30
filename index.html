@@ -40,73 +40,113 @@
     <main class="container">
         <section class="hero">
             <div class="hero-content">
-                <h2>Digital <span class="highlight">Exploration</span></h2>
-                <p class="subtitle">Navigating the frontiers of innovation through immersive experiences and emerging technologies.</p>
-                <div class="hero-interactive">
-                    <div class="interactive-card" data-category="immersive">
-                        <i class="fas fa-vr-cardboard"></i>
-                        <h4>Immersive</h4>
-                        <p>XR & spatial computing</p>
+                <!-- Wrap existing content -->
+                <div class="hero-standard-content">
+                    <h2>Digital <span class="highlight">Exploration</span></h2>
+                    <p class="subtitle">Navigating the frontiers of innovation through immersive experiences and emerging technologies.</p>
+                    <div class="hero-interactive">
+                        <div class="interactive-card" data-category="immersive">
+                            <i class="fas fa-vr-cardboard"></i>
+                            <h4>Immersive</h4>
+                            <p>XR & spatial computing</p>
+                        </div>
+                        <div class="interactive-card" data-category="intelligence">
+                            <i class="fas fa-brain"></i>
+                            <h4>Intelligence</h4>
+                            <p>AI-powered experiences</p>
+                        </div>
+                        <div class="interactive-card" data-category="innovation">
+                            <i class="fas fa-lightbulb"></i>
+                            <h4>Innovation</h4>
+                            <p>Future-forward thinking</p>
+                        </div>
                     </div>
-                    <div class="interactive-card" data-category="intelligence">
-                        <i class="fas fa-brain"></i>
-                        <h4>Intelligence</h4>
-                        <p>AI-powered experiences</p>
-                    </div>
-                    <div class="interactive-card" data-category="innovation">
-                        <i class="fas fa-lightbulb"></i>
-                        <h4>Innovation</h4>
-                        <p>Future-forward thinking</p>
+                </div>
+                <!-- Add the new quote box (initially hidden) -->
+                <div class="hero-quote-box hidden">
+                    <blockquote>
+                        <p>"The future belongs to those who believe in the beauty of their dreams."</p>
+                        <footer>— Eleanor Roosevelt</footer>
+                    </blockquote>
+                </div>
+            </div>
+            <!-- Add content specific to bg1 -->
+            <div id="hero-poem-content" class="hero-specific-content hidden">
+                <p>Green shoots emerge now,<br>Sunlight warms the sleeping earth,<br>Life awakens slow.</p>
+                <p>Petals unfurl soft,<br>Colors paint the barren branch,<br>Beauty finds its voice.</p>
+            </div>
+            <div id="hero-haiku-content" class="hero-specific-content hidden">
+                <p>Soft breeze whispers low,<br>Cherry blossoms gently fall,<br>Spring's sweet, fleeting sigh.</p>
+            </div>
+            <!-- Add content specific to bg2 -->
+            <div id="hero-calendar-content" class="hero-specific-content hero-bg2-element hidden">
+                <div id="calendar-month">Month</div>
+                <div id="calendar-day">00</div>
+            </div>
+            <div id="hero-clock-widget" class="hero-specific-content hero-bg2-element hidden">
+                <div id="clock-time">00:00 AM/PM</div>
+                <div id="clock-date">Day, Month 00</div>
+                <div id="reminder-text">Seize the moment.</div>
+            </div>
+        </section>
+
+        <!-- New Featured Insight Section -->
+        <section class="featured-insight">
+            <h4>Featured Insight</h4>
+            <div class="insight-content">
+                <blockquote>
+                    "The medium is the message. Our tools shape us as much as we shape them."
+                </blockquote>
+                <a href="#" class="insight-link">Explore Further &rarr;</a>
+            </div>
+        </section>
+
+        <!-- === Train Station Square === -->
+        <section id="train-station-square" class="pixel-art-section">
+            <div class="station-backdrop">
+                <!-- Background image via CSS -->
+                <!-- ADD START: Seven Segment Display -->
+                <div id="seven-segment-display">
+                    <span id="display-line-1">AWAITING SCHEDULE</span>
+                    <span id="display-line-2"></span>
+                </div>
+                <!-- ADD END: Seven Segment Display -->
+                <!--
+                <div id="departure-board">
+                    <p>Next train: Checking schedule...</p>
+                    <p>Status: ---</p>
+                    <p>Destination: ---</p>
+                </div>
+                -->
+                <!-- <div id="ticket-counter" title="Buy Tickets"></div> -->
+                <div class="track-area">
+                    <div id="train" class="hidden">
+                        <!-- Train image/content via CSS/JS -->
+                        <button id="get-in-btn">Board Train</button>
                     </div>
                 </div>
             </div>
-        </section>
-
-        <section class="trending-topics">
-            <h3><i class="fas fa-fire"></i> Currently Resonating</h3>
-            <div class="topic-tags" id="trending-topics">
-                <!-- Will be populated by JavaScript -->
-                <div class="tag-skeleton"></div>
-                <div class="tag-skeleton"></div>
-                <div class="tag-skeleton"></div>
-                <div class="tag-skeleton"></div>
+            <!--
+            <div id="ticket-modal" class="hidden">
+                <h4>Tickets Available</h4>
+                <ul id="ticket-list">
+                    // Ticket links will be added by JS
+                </ul>
+                <button id="close-ticket-modal">Close</button>
             </div>
+            -->
         </section>
+        <!-- === End Train Station Square === -->
 
-        <section class="news-feed">
-            <div class="section-header">
-                <h3><i class="fas fa-compass"></i> Signal Among Noise</h3>
-                <div class="filter-options">
-                    <select id="category-filter">
-                        <option value="all">All Dimensions</option>
-                        <option value="tech">Technology</option>
-                        <option value="science">Science</option>
-                        <option value="design">Design</option>
-                        <option value="philosophy">Philosophy</option>
-                    </select>
-                    <select id="time-filter">
-                        <option value="today">Today</option>
-                        <option value="week">This Week</option>
-                        <option value="month">This Month</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="news-grid">
-                <!-- News items will be populated by JavaScript -->
-                <div class="loading-spinner"></div>
-            </div>
-
-            <button class="load-more">Reveal More Patterns</button>
+        <!-- New Personal Annotation Section -->
+        <section class="personal-annotation-box">
+            <h3 class="annotation-title">Personal Annotation</h3>
+            <p class="annotation-text">
+                "The tools we use to process information fundamentally shape the thoughts we can have. This collection represents my ongoing attempt to curate the signal from the noise, and occasionally add my own reverberations to the chorus."
+            </p>
+            <div class="annotation-signature">by thvlayu</div>
         </section>
-
-        <section class="personal-notes">
-            <h3><i class="fas fa-pen-fancy"></i> Personal Annotation</h3>
-            <div class="note-content">
-                <p>"The tools we use to process information fundamentally shape the thoughts we can have. This collection represents my ongoing attempt to curate the signal from the noise, and occasionally add my own reverberations to the chorus."</p>
-                <div class="note-signature">— thvlayu</div>
-            </div>
-        </section>
+        <!-- End New Personal Annotation Section -->
 
         <section class="newsletter-section">
             <div class="newsletter-content">

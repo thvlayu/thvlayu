@@ -49,18 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let imagesLoadedCount = 0;
         const totalImages = bgImages.length;
 
-        function startSlideshowIfReady() {
-            imagesLoadedCount++;
-            if (imagesLoadedCount === totalImages) {
-                console.log("All background images preloaded. Starting slideshow.");
-                // Now that all images are loaded, start the interval timer
-                setInterval(changeBackground, 7000);
-                 // Optional: Ensure the first image div is definitely visible now
-                 if (bgDivs.length > 0) {
-                    bgDivs[0].style.opacity = '1';
-                 }
-            }
-        }
+
 
         console.log("Preloading background images...");
         bgImages.forEach((imgSrc, index) => {
@@ -73,17 +62,112 @@ document.addEventListener('DOMContentLoaded', function() {
             img.src = imgSrc; // Start loading the image
         });
 
-        // Slideshow function (remains the same)
+        // Get references to the content elements
+        const standardContent = heroSection.querySelector('.hero-standard-content');
+        const quoteBox = heroSection.querySelector('.hero-quote-box');
+        const poemContent = heroSection.querySelector('#hero-poem-content');
+        const haikuContent = heroSection.querySelector('#hero-haiku-content');
+        const calendarContent = heroSection.querySelector('#hero-calendar-content');
+        const clockWidget = heroSection.querySelector('#hero-clock-widget');
+
+        // --- Clock and Calendar Update Functions ---
+        const timeEl = document.getElementById('clock-time');
+        const dateEl = document.getElementById('clock-date');
+        const monthEl = document.getElementById('calendar-month');
+        const dayEl = document.getElementById('calendar-day');
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        function updateTimeAndCalendar() {
+            const now = new Date();
+            const month = now.getMonth();
+            const dayOfWeek = now.getDay();
+            const dayOfMonth = now.getDate();
+            const hours = now.getHours();
+            const hoursForClock = hours % 12 === 0 ? 12 : hours % 12; // Convert 0 to 12 for 12hr format
+            const minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+
+            if (timeEl) {
+                timeEl.innerHTML = `${hoursForClock}:${minutes < 10 ? '0' + minutes : minutes} <span style="font-size: 1.4rem;">${ampm}</span>`;
+            }
+            if (dateEl) {
+                dateEl.textContent = `${days[dayOfWeek]}, ${months[month]} ${dayOfMonth}`;
+            }
+            if (monthEl) {
+                monthEl.textContent = months[month];
+            }
+            if (dayEl) {
+                dayEl.textContent = dayOfMonth < 10 ? '0' + dayOfMonth : dayOfMonth;
+            }
+        }
+
+        // Update time/calendar immediately and then every second
+        updateTimeAndCalendar();
+        setInterval(updateTimeAndCalendar, 1000);
+        // ------------------------------------------
+
+        // Function to update hero content visibility based on index
+        function updateHeroContentVisibility(index) {
+            // Ensure all elements exist before trying to modify them
+            if (!standardContent || !quoteBox || !poemContent || !haikuContent || !calendarContent || !clockWidget) {
+                console.error("Hero content elements not found!");
+                return;
+            }
+
+            // Default: Hide all specific content initially
+            standardContent.classList.add('hidden');
+            quoteBox.classList.add('hidden');
+            poemContent.classList.add('hidden');
+            haikuContent.classList.add('hidden');
+            calendarContent.classList.add('hidden'); // Hide bg2 elements
+            clockWidget.classList.add('hidden'); // Hide bg2 elements
+
+            if (index === 0) { // Show quote box for the first image
+                quoteBox.classList.remove('hidden');
+            } else if (index === 1) { // Show poem and haiku for the second image
+                poemContent.classList.remove('hidden');
+                haikuContent.classList.remove('hidden');
+            } else if (index === 2) { // Show calendar and clock for the third image
+                calendarContent.classList.remove('hidden');
+                clockWidget.classList.remove('hidden');
+            } else { // Show standard content for other images (currently hidden by CSS)
+                // standardContent.classList.remove('hidden');
+            }
+
+            void heroSection.offsetWidth;
+        }
+
+        // Slideshow function (modified to update content visibility)
         function changeBackground() {
             const previousImageIndex = currentImageIndex;
-            currentImageIndex = (currentImageIndex + 1) % bgImages.length; // Use bgImages.length directly
+            currentImageIndex = (currentImageIndex + 1) % bgImages.length;
 
-            // Ensure divs exist before trying to style them
+            // Fade background images
             if (bgDivs[previousImageIndex]) {
                  bgDivs[previousImageIndex].style.opacity = '0';
             }
             if (bgDivs[currentImageIndex]) {
                 bgDivs[currentImageIndex].style.opacity = '1';
+            }
+
+            // Update content visibility
+            updateHeroContentVisibility(currentImageIndex);
+        }
+
+        // Initial content visibility setup (after preloading)
+        function startSlideshowIfReady() {
+            imagesLoadedCount++;
+            if (imagesLoadedCount === totalImages) {
+                console.log("All background images preloaded. Starting slideshow.");
+                // Set initial content visibility based on the starting image (index 0)
+                updateHeroContentVisibility(currentImageIndex); // This will now correctly show the quote box first
+                // Ensure the first background image div is visible
+                if (bgDivs.length > 0) {
+                   bgDivs[0].style.opacity = '1';
+                }
+                // Start the interval timer
+                setInterval(changeBackground, 7000);
             }
         }
         // --- END: Preload Images and Start Slideshow ---
@@ -134,13 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const mobileMenuContent = document.createElement('div');
         mobileMenuContent.className = 'mobile-menu-content';
         mobileMenuContent.innerHTML = `
-            <div class="mobile-logo">
-                <img src="Assets/Notebook logo.jpg" alt="thvlayu logo" style="width: 40px; height: 40px; border-radius: 4px; margin-right: 10px;">
-                <div>
-                    <h3>thvlayu</h3>
-                    <span>be delusional and do anything you want</span>
-                </div>
-            </div>
+            <h3 class="mobile-menu-heading">Navigation</h3>
             <ul>
                 <li><a href="#" class="active">Home</a></li>
                 <li><a href="#">Thoughts</a></li>
@@ -196,174 +274,7 @@ document.addEventListener('DOMContentLoaded', function() {
         window.requestAnimationFrame(step);
     }
 
-    animateValue("news-count", 0, 127, 2000);
     animateValue("update-frequency", 0, 24, 2000);
-
-
-    // Fetch trending topics...
-    async function fetchTrendingTopics() {
-        const mockTrends = [
-            "Generative AI", "Quantum Computing", "Neural Interfaces",
-            "Post-Capitalism", "Climate Adaptation", "Digital Minimalism",
-            "Web4 Concepts", "Biohacking"
-        ];
-        const topicsContainer = document.getElementById('trending-topics');
-        if (!topicsContainer) return; // Add check
-
-        topicsContainer.innerHTML = '';
-        const shuffled = mockTrends.sort(() => 0.5 - Math.random());
-        const selectedTrends = shuffled.slice(0, 5);
-
-        selectedTrends.forEach(trend => {
-            const tag = document.createElement('span');
-            tag.className = 'tag';
-            tag.textContent = trend;
-            topicsContainer.appendChild(tag);
-        });
-    }
-    fetchTrendingTopics();
-
-
-    // Mock news data...
-    let mockNewsData = [ // Use let if it might be reassigned, otherwise const
-        { id: 1, title: "The Ethics of Artificial Consciousness", excerpt: "...", category: "philosophy", date: new Date().toISOString().split('T')[0], source: "Philosophy Today" },
-        { id: 2, title: "Next-Gen UI Paradigms Emerging", excerpt: "...", category: "design", date: new Date(Date.now() - 86400000).toISOString().split('T')[0], source: "Design Systems" },
-        { id: 3, title: "Breakthrough in Room-Temperature Superconductors", excerpt: "...", category: "science", date: new Date(Date.now() - 172800000).toISOString().split('T')[0], source: "Science Advances" },
-        { id: 4, title: "The Decentralized Web Gains Momentum", excerpt: "...", category: "tech", date: new Date(Date.now() - 259200000).toISOString().split('T')[0], source: "Tech Futures" },
-        { id: 5, title: "Biological Computers Make First Calculations", excerpt: "...", category: "science", date: new Date(Date.now() - 345600000).toISOString().split('T')[0], source: "Nature BioTech" },
-        { id: 6, title: "New Minimalist Design Language Emerges", excerpt: "...", category: "design", date: new Date(Date.now() - 432000000).toISOString().split('T')[0], source: "Aesthetic Journal" }
-        // ... add full excerpts back if needed
-    ];
-
-
-    // Render news items...
-    function renderNewsItems(items) {
-        const newsGrid = document.querySelector('.news-grid');
-        if (!newsGrid) return; // Add check
-        newsGrid.innerHTML = '';
-
-        items.forEach(item => {
-            const newsItem = document.createElement('div');
-            newsItem.className = 'news-item';
-            let categoryClass = item.category;
-
-            newsItem.innerHTML = `
-                <div class="news-image">
-                    <div class="news-category ${categoryClass}">${item.category.charAt(0).toUpperCase() + item.category.slice(1)}</div>
-                </div>
-                <div class="news-content">
-                    <h4>${item.title}</h4>
-                    <p>${item.excerpt}</p>
-                    <div class="news-meta">
-                        <span>${item.source}</span>
-                        <span>${new Date(item.date).toLocaleDateString()}</span>
-                    </div>
-                </div>
-            `;
-            newsGrid.appendChild(newsItem);
-        });
-    }
-
-
-    // Filter news...
-    function filterNews() {
-        const categoryFilterEl = document.getElementById('category-filter');
-        const timeFilterEl = document.getElementById('time-filter');
-        if (!categoryFilterEl || !timeFilterEl) return; // Add check
-
-        const categoryFilter = categoryFilterEl.value;
-        const timeFilter = timeFilterEl.value;
-
-        let filteredItems = [...mockNewsData];
-
-        // Apply category filter
-        if (categoryFilter !== 'all') {
-            filteredItems = filteredItems.filter(item => item.category === categoryFilter);
-        }
-
-        // Apply time filter
-        const now = new Date();
-        if (timeFilter === 'today') {
-            const today = now.toISOString().split('T')[0];
-            filteredItems = filteredItems.filter(item => item.date === today);
-        } else if (timeFilter === 'week') {
-            const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-            filteredItems = filteredItems.filter(item => new Date(item.date) >= oneWeekAgo);
-        } else if (timeFilter === 'month') {
-            const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-            filteredItems = filteredItems.filter(item => new Date(item.date) >= oneMonthAgo);
-        }
-
-        renderNewsItems(filteredItems);
-
-         // Also update visibility of 'Load More' button after filtering
-        const loadMoreBtn = document.querySelector('.load-more');
-        const newsGrid = document.querySelector('.news-grid');
-        if (loadMoreBtn && newsGrid) {
-             if (newsGrid.querySelectorAll('.news-item').length >= filteredItems.length) { // Compare with filtered length potentially
-                 loadMoreBtn.style.display = 'none';
-             } else {
-                 loadMoreBtn.style.display = 'inline-block'; // Or 'block' depending on styling
-             }
-        }
-    }
-     // Initialize news and filters
-    renderNewsItems(mockNewsData);
-    const categoryFilterEl = document.getElementById('category-filter');
-    const timeFilterEl = document.getElementById('time-filter');
-    if (categoryFilterEl) categoryFilterEl.addEventListener('change', filterNews);
-    if (timeFilterEl) timeFilterEl.addEventListener('change', filterNews);
-     filterNews(); // Call initially to set button state correctly
-
-
-    // Load more button...
-    const loadMoreBtn = document.querySelector('.load-more');
-     if (loadMoreBtn) {
-        loadMoreBtn.addEventListener('click', function() {
-            const newsGrid = document.querySelector('.news-grid');
-            if (!newsGrid) return;
-
-            const currentCount = newsGrid.querySelectorAll('.news-item').length;
-            // Determine the correct source based on current filters
-            const categoryFilterVal = categoryFilterEl ? categoryFilterEl.value : 'all';
-            const timeFilterVal = timeFilterEl ? timeFilterEl.value : 'all';
-
-            // Re-filter to get the full list matching current criteria
-            let sourceItems = [...mockNewsData];
-            if (categoryFilterVal !== 'all') {
-                 sourceItems = sourceItems.filter(item => item.category === categoryFilterVal);
-            }
-             const now = new Date();
-            if (timeFilterVal === 'today') { /* filter logic */ sourceItems = sourceItems.filter(item => item.date === now.toISOString().split('T')[0]); }
-            else if (timeFilterVal === 'week') { /* filter logic */ const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); sourceItems = sourceItems.filter(item => new Date(item.date) >= weekAgo); }
-            else if (timeFilterVal === 'month') { /* filter logic */ const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); sourceItems = sourceItems.filter(item => new Date(item.date) >= monthAgo); }
-
-
-            const itemsToAdd = 3; // How many to add per click
-            const newItems = sourceItems.slice(currentCount, currentCount + itemsToAdd);
-
-            if (newItems.length > 0) {
-                // Use renderNewsItems logic partially or duplicate item creation
-                 newItems.forEach(item => {
-                    const newsItem = document.createElement('div');
-                    newsItem.className = 'news-item';
-                    let categoryClass = item.category;
-                    newsItem.innerHTML = `
-                        <div class="news-image"><div class="news-category ${categoryClass}">${item.category.charAt(0).toUpperCase() + item.category.slice(1)}</div></div>
-                        <div class="news-content"><h4>${item.title}</h4><p>${item.excerpt}</p><div class="news-meta"><span>${item.source}</span><span>${new Date(item.date).toLocaleDateString()}</span></div></div>`;
-                    newsGrid.appendChild(newsItem);
-                });
-
-                // Hide button if no more items left in the *filtered* list
-                if (newsGrid.querySelectorAll('.news-item').length >= sourceItems.length) {
-                    this.style.display = 'none';
-                }
-            } else {
-                this.style.display = 'none'; // Hide if no new items found
-            }
-        });
-        // Initial check is now done within filterNews() call
-    }
 
 
     // Newsletter form...
@@ -396,5 +307,265 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Newsletter submission:', { email, feedback });
         });
     }
+
+    // === Train Station Square Logic ===
+    const trainStationSquare = document.getElementById('train-station-square');
+    if (trainStationSquare) {
+        const trainElement = document.getElementById('train');
+        const getInBtn = document.getElementById('get-in-btn');
+        // ADD START: Get display elements
+        const displayLine1 = document.getElementById('display-line-1');
+        const displayLine2 = document.getElementById('display-line-2');
+        // ADD END: Get display elements
+
+        // --- Configuration ---
+        const minArrivalDelay = 8 * 1000; // 8 seconds
+        const maxArrivalDelay = 15 * 1000; // 15 seconds
+        const trainWaitTime = 10 * 1000; // 10 seconds wait before departure
+
+        // Update destinations to use internal links (assuming placeholders for now)
+        const randomDestinations = [
+            { name: "THOUGHTS", url: "#thoughts-section" }, // Use uppercase for display
+            { name: "PROJECTS", url: "#projects-section" },
+            { name: "RESOURCES", url: "#resources-section" },
+            { name: "CONTACT", url: "#contact-section" }
+        ];
+
+        let currentTrainArrivalTimeoutId = null;
+        let currentTrainDepartureTimeoutId = null;
+        let currentDepartureCountdownIntervalId = null;
+        let currentTrainDestinationUrl = null;
+        let currentTrainDestinationName = null;
+        let scheduledArrivalTime = null;
+        let scheduledDepartureTime = null;
+        let isTrainPresent = false;
+
+        // --- Helper Functions ---
+        // ADD START: Format Time (HH:MM)
+        function formatTime(date) {
+            if (!date) return "--:--";
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const seconds = date.getSeconds().toString().padStart(2, '0'); // Add seconds
+            return `${hours}:${minutes}:${seconds}`; // Include seconds in return
+        }
+        // ADD END: Format Time (HH:MM)
+
+        // ADD START: Format Countdown (MM:SS)
+        function formatCountdown(milliseconds) {
+            if (milliseconds < 0) milliseconds = 0;
+            const totalSeconds = Math.floor(milliseconds / 1000);
+            const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+            const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+            return `${minutes}:${seconds}`;
+        }
+        // ADD END: Format Countdown (MM:SS)
+
+        // ADD START: Update Display Function
+        function updateDisplay(line1Text = '', line2Text = '') {
+            if (displayLine1) displayLine1.textContent = line1Text;
+            if (displayLine2) displayLine2.textContent = line2Text;
+            console.log(`Display Update: L1="${line1Text}", L2="${line2Text}"`); // Debug log
+        }
+        // ADD END: Update Display Function
+
+        function showTrain(destinationName, destinationUrl) {
+            if (!trainElement || !getInBtn) return;
+
+            console.log(`Train arriving for: ${destinationName}`);
+            currentTrainDestinationUrl = destinationUrl;
+            currentTrainDestinationName = destinationName;
+            scheduledDepartureTime = new Date(Date.now() + trainWaitTime);
+
+            // Update display for arrival and start countdown
+            updateDisplay(`NOW BOARDING`, `TO: ${destinationName}`);
+            startDepartureCountdown();
+
+            trainElement.classList.remove('hidden', 'departing');
+            void trainElement.offsetWidth; // Force reflow
+            trainElement.classList.add('arriving');
+            isTrainPresent = true;
+        }
+
+        function hideTrain() {
+            if (!trainElement || !isTrainPresent) return;
+
+            console.log('Train departing...');
+            isTrainPresent = false;
+            currentTrainDestinationUrl = null;
+            currentTrainDestinationName = null;
+            scheduledDepartureTime = null;
+            stopDepartureCountdown(); // Stop countdown
+            updateDisplay(`DEPARTING...`, ``); // Update display
+
+            const onTransitionEnd = (event) => {
+                if (event.propertyName === 'transform') {
+                    console.log('Departure transition finished.');
+                    trainElement.classList.add('hidden');
+                    trainElement.classList.remove('departing', 'arriving');
+                    trainElement.removeEventListener('transitionend', onTransitionEnd);
+                    // Schedule the next arrival AFTER hiding is complete
+                    scheduleArrival(); // Schedule the actual next one now
+                }
+            };
+
+            trainElement.addEventListener('transitionend', onTransitionEnd);
+            trainElement.classList.remove('arriving');
+            trainElement.classList.add('departing');
+
+            clearTimeout(currentTrainDepartureTimeoutId); // Clear any pending automatic departure
+        }
+
+        // ADD START: Departure Countdown Logic
+        function startDepartureCountdown() {
+            stopDepartureCountdown(); // Clear any existing interval
+            currentDepartureCountdownIntervalId = setInterval(() => {
+                if (!scheduledDepartureTime) {
+                    stopDepartureCountdown();
+                    return;
+                }
+                const remainingTime = scheduledDepartureTime.getTime() - Date.now();
+                if (remainingTime <= 0) {
+                    // Time's up - trigger departure if not already triggered by boarding
+                    stopDepartureCountdown();
+                    if(isTrainPresent) { // Only hide if still present
+                       hideTrain();
+                    }
+                } else {
+                    // Update display with countdown
+                    // Ensure destination name is still available
+                    const destName = currentTrainDestinationName || 'UNKNOWN';
+                    updateDisplay(`DEPARTURE IN: ${formatCountdown(remainingTime)}`, `TO: ${destName}`);
+                }
+            }, 1000); // Update every second
+        }
+
+        function stopDepartureCountdown() {
+            clearInterval(currentDepartureCountdownIntervalId);
+            currentDepartureCountdownIntervalId = null;
+        }
+        // ADD END: Departure Countdown Logic
+
+        // --- Train Schedule Logic --- (Renamed and modified)
+        function scheduleNextTrainAction() {
+            clearTimeout(currentTrainArrivalTimeoutId);
+            clearTimeout(currentTrainDepartureTimeoutId);
+            stopDepartureCountdown();
+
+            if (isTrainPresent) {
+                 // Train is present, initiate departure.
+                 hideTrain(); // hideTrain now schedules the next arrival via transitionend
+            } else {
+                 // Train is not present, schedule next arrival.
+                 scheduleArrival();
+            }
+        }
+
+        function scheduleArrival() {
+             const delay = Math.random() * (maxArrivalDelay - minArrivalDelay) + minArrivalDelay;
+             scheduledArrivalTime = new Date(Date.now() + delay);
+                const randomIndex = Math.floor(Math.random() * randomDestinations.length);
+                const destination = randomDestinations[randomIndex];
+
+             console.log(`Scheduling next train (${destination.name}) in ~${Math.round(delay / 1000)}s at ${formatTime(scheduledArrivalTime)}`);
+             updateDisplay(`NEXT ARRIVAL: ${destination.name}`, `AT: ${formatTime(scheduledArrivalTime)}`); // Changed label to AT:
+
+             currentTrainArrivalTimeoutId = setTimeout(() => {
+                showTrain(destination.name, destination.url);
+
+                // Schedule automatic departure if not boarded
+                currentTrainDepartureTimeoutId = setTimeout(() => {
+                     if(isTrainPresent) { // Check again if it's still here
+                        console.log("Train wait time expired. Departing automatically.");
+                        hideTrain();
+                     }
+                }, trainWaitTime);
+
+            }, delay);
+        }
+
+        // --- Event Listeners ---
+        if (getInBtn) {
+            getInBtn.addEventListener('click', () => {
+                if (currentTrainDestinationUrl && trainElement && isTrainPresent) {
+                    console.log(`Boarding train to: ${currentTrainDestinationName}`);
+
+                    // 0. Fade out button & Stop countdown
+                    getInBtn.classList.add('fade-out');
+                    stopDepartureCountdown();
+                    updateDisplay(`BOARDING COMPLETE`, `EN ROUTE TO: ${currentTrainDestinationName}`);
+
+                    // 1. Immediately start departure animation & clear schedule
+                    // No need to call hideTrain() fully as we are overriding parts of it
+                    isTrainPresent = false; // Mark train as gone for scheduling
+                    trainElement.classList.remove('arriving');
+                    trainElement.classList.add('departing');
+                    clearTimeout(currentTrainDepartureTimeoutId); // Clear scheduled automatic departure
+                    clearTimeout(currentTrainArrivalTimeoutId); // Clear any pending arrival timeout just in case
+
+                    // Store URL locally before timeout potentially clears it
+                    const redirectUrl = currentTrainDestinationUrl;
+                    currentTrainDestinationUrl = null;
+                    currentTrainDestinationName = null;
+                    scheduledDepartureTime = null;
+
+                    // 2. Set timeout for overlay fade-in (adjust timing slightly)
+                    setTimeout(() => {
+                        const blurOverlay = document.getElementById('departure-overlay');
+                        if (!blurOverlay) { // Create if doesn't exist
+                           const newOverlay = document.createElement('div');
+                           newOverlay.id = 'departure-overlay';
+                           document.body.appendChild(newOverlay);
+                           void newOverlay.offsetWidth; // Trigger reflow
+                           newOverlay.classList.add('visible');
+                        } else {
+                           blurOverlay.classList.add('visible');
+                        }
+                    }, 2000); // 2s delay for overlay, allowing departure anim to start
+
+                    // 3. Set timeout for redirection (original)
+                    setTimeout(() => {
+                        console.log(`Redirecting to: ${redirectUrl}`);
+                        if (redirectUrl) {
+                             window.location.href = redirectUrl;
+                        } else {
+                             console.error("Redirect URL was lost before redirection could occur.");
+                             // Optionally, hide overlay and reschedule train if redirect fails
+                             const overlay = document.getElementById('departure-overlay');
+                             if(overlay) overlay.classList.remove('visible');
+                             scheduleArrival(); // Try to recover schedule
+                        }
+                    }, 2500); // 2.5s delay for redirect (slightly after overlay starts)
+
+                    // 4. Schedule the *next* train arrival after a delay (e.g., 3s) to avoid immediate respawn after redirect
+                    // This replaces the scheduling in hideTrain's transitionend for the boarding case
+                    setTimeout(() => {
+                         // Need to remove the departing train element from DOM or reset its state fully
+                         if(trainElement) {
+                             trainElement.classList.add('hidden');
+                             trainElement.classList.remove('departing', 'arriving');
+                             // Reset transform to avoid starting from departed position
+                             trainElement.style.transform = '';
+                         }
+                         // Remove button fade-out class for next arrival
+                         if(getInBtn) getInBtn.classList.remove('fade-out');
+
+                         scheduleArrival();
+                    }, 3000); // 3 second delay before scheduling next train post-boarding
+
+                } else {
+                     console.warn("Get In button clicked, but no destination URL/name set, train element not found, or train not present.");
+                }
+            });
+        }
+
+        // --- Initialization ---
+        console.log("Initializing train schedule and display...");
+        updateDisplay("INITIALIZING...", "AWAITING SCHEDULE"); // Initial display message
+        setTimeout(() => {
+            scheduleArrival(); // Start the first arrival schedule
+        }, 1500); // Short delay before first schedule
+
+    } // end if (trainStationSquare)
 
 }); // End of DOMContentLoaded
