@@ -323,6 +323,8 @@ document.addEventListener('DOMContentLoaded', function() {
         trainSound.preload = 'auto';
         const brakeSound = new Audio('Assets/trainbreaks.mp3');
         brakeSound.preload = 'auto';
+        let arrivalFadeOutIntervalId = null; // Keep track of arrival fade interval
+        let brakeFadeOutIntervalId = null; // Keep track of brake fade interval
         let arrivalSoundTimeoutId = null;
         let brakeSoundTimeoutId = null;
         let departureFadeIntervalId = null;
@@ -391,12 +393,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 clearInterval(arrivalFadeOutIntervalId);
                 arrivalFadeOutIntervalId = null;
             }
+            // Clear brake fade out interval if active
+            if (brakeFadeOutIntervalId) {
+                clearInterval(brakeFadeOutIntervalId);
+                brakeFadeOutIntervalId = null;
+            }
             trainSound.volume = 1; // Reset volume for next play
             brakeSound.volume = 1; // Reset brake volume
             console.log("All train sounds stopped.");
         }
-
-        let arrivalFadeOutIntervalId = null; // Keep track of arrival fade interval
 
         function playArrivalSound() {
             stopTrainSound(); // Ensure any previous sound is stopped
@@ -404,20 +409,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 trainSound.currentTime = 11; // Start at 11 seconds
                 trainSound.volume = 1; // Full volume initially
                 trainSound.play().catch(e => console.error("Error starting arrival playback:", e)); // Add catch for play promise
-                console.log("Playing arrival sound (11s - 14.5s, fade-out)");
+                console.log("Playing arrival sound (11s - 15.5s, fade 14.5s-15.5s)");
 
-                // Clear any previous fade out interval
-                if (arrivalFadeOutIntervalId) clearInterval(arrivalFadeOutIntervalId);
+                // Schedule the 1-second fade-out to start after 3.5s (at the 14.5s mark)
+                clearTimeout(arrivalSoundTimeoutId); // Clear previous timeout if any
+                if (arrivalFadeOutIntervalId) clearInterval(arrivalFadeOutIntervalId); // Clear previous interval
 
-                // Schedule the fade-out to start at 14 seconds (0.5s duration)
                 arrivalSoundTimeoutId = setTimeout(() => {
                     let currentVolume = 1.0;
-                    const fadeDuration = 500; // 0.5 seconds
-                    const fadeSteps = 10;
+                    const fadeDuration = 1000; // 1 second
+                    const fadeSteps = 20; // Smoother fade
                     const volumeDecrement = 1.0 / fadeSteps;
                     const intervalTime = fadeDuration / fadeSteps;
 
-                    console.log("Starting arrival sound fade-out.");
+                    console.log("Starting arrival sound fade-out (14.5s-15.5s).");
                     arrivalFadeOutIntervalId = setInterval(() => {
                         currentVolume -= volumeDecrement;
                         if (currentVolume <= 0) {
@@ -427,22 +432,11 @@ document.addEventListener('DOMContentLoaded', function() {
                             arrivalFadeOutIntervalId = null;
                             console.log("Arrival sound fade-out complete and paused.");
                         } else {
-                            trainSound.volume = Math.max(0, currentVolume); // Ensure volume doesn't go below 0
+                            trainSound.volume = Math.max(0, currentVolume);
                         }
                     }, intervalTime);
 
-                    // Backup stop in case interval fails slightly off timing
-                     setTimeout(() => {
-                        if (arrivalFadeOutIntervalId) {
-                            clearInterval(arrivalFadeOutIntervalId);
-                            arrivalFadeOutIntervalId = null;
-                            trainSound.pause();
-                            trainSound.volume = 0; // Ensure volume is 0
-                            console.log("Arrival sound forced stop after fade duration.");
-                        }
-                    }, fadeDuration + 100); // Stop shortly after expected fade end
-
-                }, 3000); // Start fade-out after 3 seconds (at the 14s mark of the audio)
+                }, 3500);
 
             } catch (error) {
                 console.error("Error playing arrival sound:", error);
@@ -453,17 +447,40 @@ document.addEventListener('DOMContentLoaded', function() {
             // Don't stop other sounds, just play this one
             brakeSound.pause(); // Stop previous instance if any
             clearTimeout(brakeSoundTimeoutId);
+            if (brakeFadeOutIntervalId) clearInterval(brakeFadeOutIntervalId); // Clear previous interval
+
             try {
                 brakeSound.currentTime = 2; // Start at 2 seconds
                 brakeSound.volume = 1; // Full volume
                 brakeSound.play().catch(e => console.error("Error starting brake playback:", e));
-                console.log("Playing brake sound (2s - 5s)");
+                console.log("Playing brake sound (2s - 6s, fade 5s-6s)");
 
-                // Stop after 3 seconds
+                // Schedule the 1-second fade-out to start after 3s (at the 5s mark)
+                clearTimeout(brakeSoundTimeoutId); // Clear previous timeout if any
+
                 brakeSoundTimeoutId = setTimeout(() => {
-                    brakeSound.pause();
-                    console.log("Brake sound finished.");
-                }, 3000);
+                    let currentVolume = 1.0;
+                    const fadeDuration = 1000; // 1 second
+                    const fadeSteps = 20;
+                    const volumeDecrement = 1.0 / fadeSteps;
+                    const intervalTime = fadeDuration / fadeSteps;
+
+                    console.log("Starting brake sound fade-out (5s-6s).");
+                    brakeFadeOutIntervalId = setInterval(() => {
+                        currentVolume -= volumeDecrement;
+                        if (currentVolume <= 0) {
+                            brakeSound.volume = 0;
+                            brakeSound.pause(); // Stop playback after fade
+                            clearInterval(brakeFadeOutIntervalId);
+                            brakeFadeOutIntervalId = null;
+                            console.log("Brake sound fade-out complete and paused.");
+                        } else {
+                            brakeSound.volume = Math.max(0, currentVolume);
+                        }
+                    }, intervalTime);
+
+                }, 3000); // Start fade-out after 3 seconds
+
             } catch (error) {
                 console.error("Error playing brake sound:", error);
             }
@@ -537,7 +554,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!trainElement || !isTrainPresent) return;
 
             console.log('Train departing...');
-            playDepartureSound(); // Play departure sound immediately
+            // Start visual departure and sound simultaneously
+            console.log('Starting visual departure and sound...');
+            trainElement.classList.remove('arriving');
+            trainElement.classList.add('departing');
+            playDepartureSound(); // Play departure sound now
 
             isTrainPresent = false;
             currentTrainDestinationUrl = null;
@@ -564,18 +585,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add listener *before* starting the transition
             trainElement.removeEventListener('transitionend', onTransitionEnd); // Remove previous just in case
             trainElement.addEventListener('transitionend', onTransitionEnd);
-
-            // Delay the visual departure animation by 1 second
-            console.log('Starting visual departure in 1 second...');
-            setTimeout(() => {
-                if (trainElement) { // Check if train element still exists
-                   console.log('Applying departing class now.');
-            trainElement.classList.remove('arriving');
-            trainElement.classList.add('departing');
-                } else {
-                   console.warn("Train element gone before visual departure could start.");
-                }
-            }, 1000); // 1 second delay for visual departure start
 
             clearTimeout(currentTrainDepartureTimeoutId); // Clear any pending automatic departure timeout
         }
@@ -720,75 +729,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Store URL locally before timeout potentially clears it
                     const redirectUrl = currentTrainDestinationUrl;
-                     // Clear state *after* sound starts but *before* visual animation delay
-                    currentTrainDestinationUrl = null;
-                    currentTrainDestinationName = null;
-                    scheduledDepartureTime = null;
+                     // Start visual departure immediately (sound already started)
+                    console.log('Starting visual departure and sound...');
+                    trainElement.classList.remove('arriving');
+                    trainElement.classList.add('departing');
+                    playDepartureSound(); // Play departure sound now
 
-                     // Delay visual departure and subsequent actions by 1 second
-                     console.log('Starting visual departure and redirect sequence in 1 second (boarding)...');
-                     setTimeout(() => {
-                         console.log('Applying departing class and setting timeouts (boarding).');
-                         if (trainElement) {
-                             trainElement.classList.remove('arriving');
-                             trainElement.classList.add('departing');
-                         }
-
-                         // 2. Set timeout for overlay fade-in (relative to visual departure)
+                    // 2. Set timeout for overlay fade-in (relative to visual departure START)
                     setTimeout(() => {
                         const blurOverlay = document.getElementById('departure-overlay');
-                             // Create overlay if it doesn't exist (robustness)
-                             let overlayToUse = blurOverlay;
-                             if (!overlayToUse) {
-                                 console.log("Creating departure overlay.");
-                                 overlayToUse = document.createElement('div');
-                                 overlayToUse.id = 'departure-overlay';
-                                 document.body.appendChild(overlayToUse);
-                             }
-                             void overlayToUse.offsetWidth; // Trigger reflow
-                             overlayToUse.classList.add('visible');
-                             console.log("Departure overlay made visible.");
-                         }, 1000); // 1s delay for overlay (2s total from click)
+                        let overlayToUse = blurOverlay;
+                        if (!overlayToUse) {
+                            console.log("Creating departure overlay.");
+                            overlayToUse = document.createElement('div');
+                            overlayToUse.id = 'departure-overlay';
+                            document.body.appendChild(overlayToUse);
+                        }
+                        void overlayToUse.offsetWidth; // Trigger reflow
+                        overlayToUse.classList.add('visible');
+                        console.log("Departure overlay made visible.");
+                    }, 1000); // 1s delay for overlay (1s total from click)
 
-                         // 3. Set timeout for redirection (relative to visual departure)
+                    // 3. Set timeout for redirection (relative to visual departure START)
                     setTimeout(() => {
                         console.log(`Redirecting to: ${redirectUrl}`);
                         if (redirectUrl) {
-                             window.location.href = redirectUrl;
+                            window.location.href = redirectUrl;
                         } else {
-                             console.error("Redirect URL was lost before redirection could occur.");
-                             // Optionally, hide overlay and reschedule train if redirect fails
-                             const overlay = document.getElementById('departure-overlay');
-                             if(overlay) overlay.classList.remove('visible');
-                                 stopTrainSound(); // Stop sound if redirect fails
-                             scheduleArrival(); // Try to recover schedule
+                            console.error("Redirect URL was lost before redirection could occur.");
+                            const overlay = document.getElementById('departure-overlay');
+                            if(overlay) overlay.classList.remove('visible');
+                            stopTrainSound(); // Stop sound if redirect fails
+                            scheduleArrival(); // Try to recover schedule
                         }
-                         }, 1500); // 1.5s delay for redirect (2.5s total from click)
-
-                     }, 1000); // 1 second delay for visual departure start
-
-
-                     // 4. Schedule the *next* train arrival after a delay (e.g., 3s)
-                     // This needs to happen *after* the visual departure has likely completed,
-                     // but we start the timer relative to the click for simplicity.
-                     // If the redirect happens, this scheduled arrival might not matter.
-                    setTimeout(() => {
-                         console.log("Scheduling next arrival post-boarding attempt.");
-                          // Need to ensure train element is reset if redirect *doesn't* happen
-                          if(trainElement && !redirectUrl) { // Only reset if not redirecting
-                             trainElement.classList.add('hidden');
-                             trainElement.classList.remove('departing', 'arriving');
-                              trainElement.style.transform = ''; // Reset transform
-                              console.log("Resetting train element state post-failed boarding.");
-                         }
-                         // Remove button fade-out class for next arrival
-                         if(getInBtn) getInBtn.classList.remove('fade-out');
-
-                          // Ensure sound is stopped before next schedule if redirect failed
-                          if (!redirectUrl) stopTrainSound();
-
-                         scheduleArrival();
-                     }, 3000); // 3 second delay before scheduling next train post-boarding attempt
+                    }, 1500); // 1.5s delay for redirect (1.5s total from click)
 
                 } else {
                      console.warn("Get In button clicked, but no destination URL/name set, train element not found, or train not present.");
