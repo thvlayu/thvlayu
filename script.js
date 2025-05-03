@@ -323,11 +323,18 @@ document.addEventListener('DOMContentLoaded', function() {
         trainSound.preload = 'auto';
         const brakeSound = new Audio('Assets/trainbreaks.mp3');
         brakeSound.preload = 'auto';
+        const stationAmbiance = new Audio('Assets/stationambience.mp3'); // <<< ADDED Ambience Audio
+        stationAmbiance.preload = 'auto'; // <<< ADDED
+        stationAmbiance.loop = true;      // <<< ADDED Loop
+        const trainDoorSound = new Audio('Assets/Traindoor.mp3'); // <<< ADDED Train Door Sound
+        trainDoorSound.preload = 'auto';                        // <<< ADDED
         let arrivalFadeOutIntervalId = null; // Keep track of arrival fade interval
         let brakeFadeOutIntervalId = null; // Keep track of brake fade interval
         let arrivalSoundTimeoutId = null;
         let brakeSoundTimeoutId = null;
         let departureFadeIntervalId = null;
+        let ambienceFadeInIntervalId = null;  // <<< ADDED Ambience fade in interval ID
+        let ambienceFadeOutIntervalId = null; // <<< ADDED Ambience fade out interval ID
         // ADD END: Audio Setup
 
         // --- Configuration ---
@@ -336,12 +343,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const trainWaitTime = 10 * 1000; // 10 seconds wait before departure
 
         // Update destinations to use internal links (assuming placeholders for now)
-        const randomDestinations = [
-            { name: "THOUGHTS", url: "#thoughts-section" }, // Use uppercase for display
-            { name: "PROJECTS", url: "#projects-section" },
-            { name: "RESOURCES", url: "#resources-section" },
-            { name: "CONTACT", url: "#contact-section" }
+        const allDestinations = [ // Renamed from randomDestinations
+            { name: "THOUGHTS", url: "Thoughts.html" }, // Use uppercase for display
+            { name: "PROJECTS", url: "Projects.html" },
+            { name: "RESOURCES", url: "Resources.html" },
+            { name: "CONTACT", url: "Contact.html" },
+            { name: "LIBRARY", url: "Library.html" },
+            { name: "HOME", url: "index.html" }
         ];
+        let shuffledDestinationsQueue = []; // Queue for the current cycle
 
         let currentTrainArrivalTimeoutId = null;
         let currentTrainDepartureTimeoutId = null;
@@ -353,15 +363,31 @@ document.addEventListener('DOMContentLoaded', function() {
         let isTrainPresent = false;
 
         // --- Helper Functions ---
-        // ADD START: Format Time (HH:MM)
+        // ADD START: Shuffle Array (Fisher-Yates Algorithm)
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            // While there remain elements to shuffle.
+            while (currentIndex !== 0) {
+                // Pick a remaining element.
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                // And swap it with the current element.
+                [array[currentIndex], array[randomIndex]] = [
+                    array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+        // ADD END: Shuffle Array
+
+        // ADD START: Format Time (HH:MM:SS) // Modified signature
         function formatTime(date) {
-            if (!date) return "--:--";
+            if (!date) return "--:--:--"; // Changed default format
             const hours = date.getHours().toString().padStart(2, '0');
             const minutes = date.getMinutes().toString().padStart(2, '0');
             const seconds = date.getSeconds().toString().padStart(2, '0'); // Add seconds
             return `${hours}:${minutes}:${seconds}`; // Include seconds in return
         }
-        // ADD END: Format Time (HH:MM)
+        // ADD END: Format Time (HH:MM:SS)
 
         // ADD START: Format Countdown (MM:SS)
         function formatCountdown(milliseconds) {
@@ -530,6 +556,48 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         // ADD END: Sound Control Functions
 
+        // ADD START: Ambience Sound Control Functions
+        function fadeAudio(audioElement, targetVolume, duration, intervalIdRef, onComplete) {
+            // Clear any existing interval for this audio element using the reference object
+            if (intervalIdRef.id) {
+                clearInterval(intervalIdRef.id);
+                intervalIdRef.id = null;
+            }
+
+            const fadeSteps = 30; // More steps for smoother fade (e.g., 50ms intervals for 1.5s)
+            const intervalTime = duration / fadeSteps;
+            const startVolume = audioElement.volume;
+            const volumeChange = (targetVolume - startVolume) / fadeSteps;
+            let currentStep = 0;
+
+            console.log(`Fading audio ${audioElement.src.split('/').pop()} from ${startVolume.toFixed(2)} to ${targetVolume.toFixed(2)} over ${duration}ms`);
+
+            if (targetVolume > 0 && audioElement.paused) {
+                 audioElement.play().catch(e => console.error(`Error playing ${audioElement.src.split('/').pop()}:`, e));
+            }
+
+            intervalIdRef.id = setInterval(() => {
+                currentStep++;
+                let newVolume = startVolume + volumeChange * currentStep;
+
+                if ((volumeChange > 0 && newVolume >= targetVolume) || (volumeChange < 0 && newVolume <= targetVolume) || currentStep >= fadeSteps) {
+                    audioElement.volume = targetVolume;
+                    clearInterval(intervalIdRef.id);
+                    intervalIdRef.id = null;
+                    console.log(`Fade complete for ${audioElement.src.split('/').pop()}. Final volume: ${targetVolume.toFixed(2)}`);
+                    if (targetVolume <= 0) {
+                        audioElement.pause();
+                        audioElement.currentTime = 0; // Reset for next play if needed
+                        console.log(`Paused ${audioElement.src.split('/').pop()}`);
+                    }
+                    if (onComplete) onComplete();
+                } else {
+                    audioElement.volume = newVolume;
+                }
+            }, intervalTime);
+        }
+        // ADD END: Ambience Sound Control Functions
+
         function showTrain(destinationName, destinationUrl) {
             // Note: Arrival sound is now started 3.5s BEFORE this function is fully called (see scheduleArrival)
             if (!trainElement || !getInBtn) return;
@@ -626,6 +694,12 @@ document.addEventListener('DOMContentLoaded', function() {
             stopDepartureCountdown();
             stopTrainSound(); // Stop any sound before scheduling next action
 
+            // Fade out ambience when scheduling next train if mouse isn't over station
+            if (!trainStationSquare.matches(':hover')) {
+                const fadeOutIntervalRef = { id: ambienceFadeOutIntervalId }; // Use a local ref object
+                 fadeAudio(stationAmbiance, 0.0, 500, fadeOutIntervalRef); // Faster fade out (0.5s)
+            }
+
             if (isTrainPresent) {
                  // Train is present, initiate departure.
                  hideTrain(); // hideTrain now schedules the next arrival via transitionend
@@ -639,12 +713,55 @@ document.addEventListener('DOMContentLoaded', function() {
              // Clear any previous arrival timeout
              clearTimeout(currentTrainArrivalTimeoutId);
 
+             // --- START: Destination Queue Management ---
+             if (shuffledDestinationsQueue.length === 0) {
+                 console.log("Destination queue empty. Reshuffling...");
+                 // Get current page filename (handle root path case)
+                 let currentPageFilename = window.location.pathname.split('/').pop();
+                 if (!currentPageFilename || currentPageFilename === '') {
+                     currentPageFilename = 'index.html'; // Assume index.html for root path
+                 }
+                 console.log(`Current page detected: ${currentPageFilename}`);
+
+                 // Filter out the current page destination
+                 const availableDestinations = allDestinations.filter(dest => dest.url !== currentPageFilename);
+                 console.log(`Available destinations for next cycle: ${availableDestinations.map(d => d.name).join(', ')}`);
+
+
+                 if (availableDestinations.length === 0) {
+                     console.error("No available destinations after filtering. Cannot schedule train.");
+                      // Optionally, display an error message on the board
+                      updateDisplay("SERVICE ALERT", "NO DESTINATIONS");
+                      // Maybe try again after a longer delay?
+                      // setTimeout(scheduleArrival, 30000); // Try again in 30s
+                     return; // Stop scheduling
+                 }
+
+                 // Shuffle the filtered list and set it as the new queue
+                 shuffledDestinationsQueue = shuffleArray([...availableDestinations]); // Shuffle a copy
+                 console.log(`New shuffled queue: ${shuffledDestinationsQueue.map(d => d.name).join(' -> ')}`);
+             }
+
+              // Get the next destination from the front of the queue
+             const destination = shuffledDestinationsQueue.shift(); // Removes and returns the first element
+             if (!destination) {
+                 console.error("Failed to get a destination from the queue, even after attempting refill.");
+                 updateDisplay("SYSTEM ERROR", "TRY AGAIN LATER");
+                 // Attempt to recover by forcing a reshuffle next time
+                 shuffledDestinationsQueue = []; // Clear queue to trigger refill on next call
+                 setTimeout(scheduleArrival, 5000); // Try again soon
+                 return;
+             }
+             console.log(`Next destination from queue: ${destination.name}`);
+             // --- END: Destination Queue Management ---
+
+
              const delay = Math.random() * (maxArrivalDelay - minArrivalDelay) + minArrivalDelay;
              scheduledArrivalTime = new Date(Date.now() + delay);
-                const randomIndex = Math.floor(Math.random() * randomDestinations.length);
-                const destination = randomDestinations[randomIndex];
+                // const randomIndex = Math.floor(Math.random() * randomDestinations.length); // REMOVED
+                // const destination = randomDestinations[randomIndex]; // REMOVED - using queue now
 
-             console.log(`Scheduling next train (${destination.name}) arrival sound in ~${Math.round((delay - 3500) / 1000)}s, visual in ~${Math.round(delay / 1000)}s.`);
+             console.log(`Scheduling next train (${destination.name}) arrival sound in ~${Math.round((delay - 1000) / 1000)}s, visual in ~${Math.round(delay / 1000)}s.`); // Adjusted sound delay log
              updateDisplay(`NEXT ARRIVAL: ${destination.name}`, `AT: ${formatTime(scheduledArrivalTime)}`);
 
              // --- ADJUST SOUND TIMING HERE ---
@@ -713,56 +830,60 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (currentTrainDestinationUrl && trainElement && isTrainPresent) {
                     console.log(`Boarding train to: ${currentTrainDestinationName}`);
 
-                     // 0. Fade out button & Stop countdown & Stop arrival sound / Start departure sound
+                     // 0. Fade out button & Stop countdown & Stop arrival sound / Start departure sound / Play door sound
+                    // These happen IMMEDIATELY on click
                     getInBtn.classList.add('fade-out');
                     stopDepartureCountdown();
-                     playDepartureSound(); // Start departure sound immediately on boarding
+                    trainDoorSound.play().catch(e => console.error("Error playing train door sound:", e)); // <<< Play door sound immediately
                     updateDisplay(`BOARDING COMPLETE`, `EN ROUTE TO: ${currentTrainDestinationName}`);
+                    const redirectUrl = currentTrainDestinationUrl; // Store URL before timeout
 
-                    // 1. Immediately start departure animation & clear schedule
-                    // No need to call hideTrain() fully as we are overriding parts of it
-                    isTrainPresent = false; // Mark train as gone for scheduling
-                    trainElement.classList.remove('arriving');
-                    trainElement.classList.add('departing');
-                    clearTimeout(currentTrainDepartureTimeoutId); // Clear scheduled automatic departure
-                    clearTimeout(currentTrainArrivalTimeoutId); // Clear any pending arrival timeout just in case
-
-                    // Store URL locally before timeout potentially clears it
-                    const redirectUrl = currentTrainDestinationUrl;
-                     // Start visual departure immediately (sound already started)
-                    console.log('Starting visual departure and sound...');
-                    trainElement.classList.remove('arriving');
-                    trainElement.classList.add('departing');
-                    playDepartureSound(); // Play departure sound now
-
-                    // 2. Set timeout for overlay fade-in (relative to visual departure START)
+                    // 1. DELAYED ACTIONS: Start train movement, overlay, and redirection after 3 seconds
+                    console.log("Starting 3-second boarding timer before departure...");
                     setTimeout(() => {
-                        const blurOverlay = document.getElementById('departure-overlay');
-                        let overlayToUse = blurOverlay;
-                        if (!overlayToUse) {
-                            console.log("Creating departure overlay.");
-                            overlayToUse = document.createElement('div');
-                            overlayToUse.id = 'departure-overlay';
-                            document.body.appendChild(overlayToUse);
-                        }
-                        void overlayToUse.offsetWidth; // Trigger reflow
-                        overlayToUse.classList.add('visible');
-                        console.log("Departure overlay made visible.");
-                    }, 1000); // 1s delay for overlay (1s total from click)
+                        console.log("3-second timer complete. Initiating departure sequence.");
 
-                    // 3. Set timeout for redirection (relative to visual departure START)
-                    setTimeout(() => {
-                        console.log(`Redirecting to: ${redirectUrl}`);
-                        if (redirectUrl) {
-                            window.location.href = redirectUrl;
-                        } else {
-                            console.error("Redirect URL was lost before redirection could occur.");
-                            const overlay = document.getElementById('departure-overlay');
-                            if(overlay) overlay.classList.remove('visible');
-                            stopTrainSound(); // Stop sound if redirect fails
-                            scheduleArrival(); // Try to recover schedule
-                        }
-                    }, 1500); // 1.5s delay for redirect (1.5s total from click)
+                        // Actions that now happen after 3 seconds:
+                        playDepartureSound(); // <<< MOVED HERE: Start departure sound with visual departure
+                        isTrainPresent = false; // Mark train as gone for scheduling
+                        trainElement.classList.remove('arriving');
+                        trainElement.classList.add('departing');
+                        clearTimeout(currentTrainDepartureTimeoutId); // Clear scheduled automatic departure
+                        clearTimeout(currentTrainArrivalTimeoutId); // Clear any pending arrival timeout just in case
+
+                        // Start visual departure immediately (sound already started earlier)
+                        console.log('Starting visual departure...'); // Sound started 3s ago
+
+                        // 2. Set timeout for overlay fade-in (relative to visual departure START - now 1s after the 3s delay)
+                        setTimeout(() => {
+                            const blurOverlay = document.getElementById('departure-overlay');
+                            let overlayToUse = blurOverlay;
+                            if (!overlayToUse) {
+                                console.log("Creating departure overlay.");
+                                overlayToUse = document.createElement('div');
+                                overlayToUse.id = 'departure-overlay';
+                                document.body.appendChild(overlayToUse);
+                            }
+                            void overlayToUse.offsetWidth; // Trigger reflow
+                            overlayToUse.classList.add('visible');
+                            console.log("Departure overlay made visible.");
+                        }, 4000); // 1s + 3s delay = 4s delay for overlay (7s total from click)
+
+                        // 3. Set timeout for redirection (relative to visual departure START - now 1.5s after the 3s delay)
+                        setTimeout(() => {
+                            console.log(`Redirecting to: ${redirectUrl}`);
+                            if (redirectUrl) {
+                                window.location.href = redirectUrl;
+                            } else {
+                                console.error("Redirect URL was lost before redirection could occur.");
+                                const overlay = document.getElementById('departure-overlay');
+                                if(overlay) overlay.classList.remove('visible');
+                                stopTrainSound(); // Stop sound if redirect fails
+                                scheduleArrival(); // Try to recover schedule
+                            }
+                        }, 1500); // 1.5s delay for redirect (4.5s total from click)
+
+                    }, 3000); // 3-second delay before starting departure sequence
 
                 } else {
                      console.warn("Get In button clicked, but no destination URL/name set, train element not found, or train not present.");
@@ -770,12 +891,45 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
+        // ADD START: Ambience Hover Listeners
+        const ambienceFadeDuration = 1500; // 1.5 seconds
+        const fadeInIntervalRef = { id: ambienceFadeInIntervalId };
+        const fadeOutIntervalRef = { id: ambienceFadeOutIntervalId };
+
+        trainStationSquare.addEventListener('mouseenter', () => {
+            console.log("Mouse entered station, fading in ambience.");
+            // Clear potential fade-out first
+            if (fadeOutIntervalRef.id) {
+                 clearInterval(fadeOutIntervalRef.id);
+                 fadeOutIntervalRef.id = null;
+                 console.log("Cleared existing ambience fade-out interval.");
+            }
+            // Pass interval ID objects by reference
+            fadeAudio(stationAmbiance, 1.0, ambienceFadeDuration, fadeInIntervalRef);
+        });
+
+        trainStationSquare.addEventListener('mouseleave', () => {
+            console.log("Mouse left station, fading out ambience.");
+            // Clear potential fade-in first
+            if (fadeInIntervalRef.id) {
+                 clearInterval(fadeInIntervalRef.id);
+                 fadeInIntervalRef.id = null;
+                 console.log("Cleared existing ambience fade-in interval.");
+            }
+             // Pass interval ID objects by reference
+            fadeAudio(stationAmbiance, 0.0, ambienceFadeDuration, fadeOutIntervalRef);
+        });
+        // ADD END: Ambience Hover Listeners
+
+
         // --- Initialization ---
         console.log("Initializing train schedule and display...");
          stopTrainSound(); // Ensure no sound plays initially
         updateDisplay("INITIALIZING...", "AWAITING SCHEDULE"); // Initial display message
+        // Initialize the queue logic by calling scheduleArrival which will populate it
+        // scheduleArrival(); // REMOVED - now called after short delay
         setTimeout(() => {
-            scheduleArrival(); // Start the first arrival schedule
+             scheduleArrival(); // Start the first arrival schedule - this will now populate the queue
         }, 1500); // Short delay before first schedule
 
     } // end if (trainStationSquare)

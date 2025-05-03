@@ -1,0 +1,586 @@
+/* notebook.css - Styles specific to notebook.html */
+
+body {
+    font-family: 'Tiempos Text', serif; /* Match font if desired */
+    background-color: #fdfaf6; /* Changed to off-white by default */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    /* justify-content: center; */ /* Removed: Using padding/alignment in section now */
+}
+
+/* Apply off-white background when specified */
+body.off-white-bg {
+    background-image: url('Assets/notebg.jpg'); /* Use image instead of color */
+    background-size: cover; /* Cover the entire viewport */
+    background-position: center; /* Center the background image */
+    background-attachment: fixed; /* Keep the background fixed when scrolling */
+    transition: background-color 0.5s ease-in-out; /* Smooth transition */
+}
+
+.container {
+    width: 90%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+main.container {
+    /* flex-grow: 1; */ /* Removed: No longer needed when initial content hides */
+    padding-top: 2rem; /* Add some space above content */
+    padding-bottom: 2rem; /* Add some space below content */
+    /* background-color: #fdfaf6; */ /* Removed light background */
+}
+
+/* === Styles removed for elements now handled by styles.css === */
+/* Ensure the station section has the contrasting background */
+.pixel-art-section {
+    /* background-color: #fdfaf6; */ /* Removed light background to let body color show */
+    transition: opacity 0.5s ease-out; /* Added for fade-out */
+}
+/* .station-backdrop, #seven-segment-display, etc. */
+
+/* === Library Entrance Area Styles === */
+.library-entrance-area {
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically (if needed, depends on main height) */
+    padding: 2rem 0; /* Add some vertical padding */
+    transition: opacity 0.5s ease-out; /* Added for fade-out */
+}
+
+.library-container {
+    position: relative; /* Needed for absolute positioning of hover text */
+    cursor: pointer; /* Indicate it's clickable */
+    /* max-width: 600px; */ /* Limit max width - REMOVED */
+    width: 100%; /* Responsive width - CHANGED to 100% */
+}
+
+.library-image {
+    display: block; /* Remove extra space below image */
+    width: 100%; /* Make image fill container */
+    height: auto; /* Maintain aspect ratio */
+    /* border: 4px solid #5a463a; */ /* Removed border */
+    image-rendering: pixelated; /* Preserve pixel look */
+    image-rendering: crisp-edges;
+    transition: transform 0.2s ease-in-out; /* Add subtle zoom effect on hover */
+}
+
+.library-container:hover .library-image {
+    transform: scale(1.02); /* Slight zoom on hover */
+}
+
+.hover-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-family: 'Press Start 2P', cursive; /* Pixel font */
+    font-size: 1rem;
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    pointer-events: none; /* Prevent hover text from blocking hover on image */
+}
+
+.library-container:hover .hover-text {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* === Timer Display Styles === */
+.timer-display {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: rgba(255, 255, 255, 0.85);
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-family: 'Press Start 2P', system-ui, sans-serif; /* Added fallback font */
+    font-size: 0.9rem;
+    border: 2px solid #5a463a;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    pointer-events: none; /* Prevent interaction */
+    z-index: 10; /* Ensure timer is on top */
+}
+
+/* === Fade Out Style === */
+.fade-out {
+    opacity: 0 !important; /* Use !important to override potential specificity issues */
+    visibility: hidden !important;
+    pointer-events: none !important;
+    max-height: 0 !important; /* Collapse the element */
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    border: 0 !important; /* Remove borders if any */
+    overflow: hidden !important; /* Hide content during collapse */
+    /* Apply layout collapse after opacity transition finishes */
+    transition: opacity 0.5s ease-out, visibility 0s linear 0.5s, max-height 0.5s ease-out 0s, padding 0.5s ease-out 0s, margin 0.5s ease-out 0s, border 0.5s ease-out 0s !important;
+}
+
+/* === Reading Area Styles === */
+.reading-section {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Changed back to center for vertical alignment */
+    padding: 0.5rem 0; /* Reverted padding */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in;
+    /* Ensure it doesn't take up space initially if using flex/grid */
+    max-height: 0;
+    overflow: hidden;
+}
+
+.reading-section.fade-in {
+    opacity: 1;
+    visibility: visible;
+    max-height: 1000px; /* Allow space for content; adjust as needed */
+    transition: opacity 0.5s ease-in, max-height 0s ease-in 0s; /* Smooth opacity, instant height */
+    flex-grow: 1; /* Allow section to expand vertically */
+}
+
+#reading-image {
+    max-width: 200px; /* Reduced max-width */
+    width: 85%; /* Adjusted width percentage */
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 10vh; /* Added negative margin to pull image up */
+    /* Optional: Add pixelated rendering if desired */
+    /* image-rendering: pixelated; */
+    /* image-rendering: crisp-edges; */
+    cursor: pointer;
+}
+
+/* === Text Editing Overlay Styles === */
+#text-editor-overlay { /* Base style */
+    position: fixed; /* Cover the viewport */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent; /* Transparent background */
+    backdrop-filter: blur(0px); /* No initial blur */
+    z-index: 100; /* Ensure it's above other content */
+    padding: 2% 5%; /* Adjusted padding top/bottom */
+    box-sizing: border-box;
+    display: flex; /* Use flex to layout toolbar and pages */
+    flex-direction: row; /* Changed from column to row for side toolbar */
+    opacity: 0; /* Initially hidden */
+    visibility: hidden; /* Initially hidden */
+    pointer-events: none; /* Initially non-interactive */
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out, backdrop-filter 0.3s ease-in-out;
+}
+
+#text-editor-overlay.text-editor-overlay--visible { /* Modifier for visible state */
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    backdrop-filter: blur(5px); /* Apply blur when visible */
+}
+
+/* Add notebook page background image */
+#text-editor-overlay::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 97%; /* Expand to full width */
+    height: 97%; /* Expand to full height */
+    background-image: url('Assets/notebookpage.png');
+    background-size: cover; /* Change from contain to cover to fill more space */
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -1; /* Position behind the content */
+    opacity: 0.9; /* Increased opacity to make it more visible */
+}
+
+#format-toolbar {
+    /* Vertical toolbar styles */
+    width: 90px; /* Increased width for vertical toolbar */
+    height: auto; /* Auto height */
+    flex-shrink: 0; /* Prevent toolbar from shrinking */
+    border: 1px solid rgba(204, 204, 204, 0.5);
+    background-color: rgba(245, 242, 238, 0.5); /* More transparent */
+    margin-left: auto; /* Push to right side */
+    margin-right: 20px; /* Space from right edge */
+    display: flex;
+    flex-direction: column; /* Vertical layout */
+    align-items: center;
+    padding: 15px 0;
+    justify-content: flex-start; /* Align items to the top */
+    font-family: sans-serif;
+    color: #555;
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px); /* Blurred effect */
+    overflow-y: auto; /* Add scroll for many buttons */
+    max-height: 90vh; /* Limit height and enable scrolling if needed */
+}
+
+.toolbar-group {
+    display: flex;
+    flex-direction: column; /* Vertical layout */
+    align-items: center;
+    gap: 10px;
+}
+
+.toolbar-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: #444;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.toolbar-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.toolbar-button.active {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #000;
+}
+
+.toolbar-separator {
+    width: 30px; /* Width for horizontal separator in vertical toolbar */
+    height: 1px; /* Height for horizontal separator */
+    background-color: #ddd;
+    margin: 10px 0; /* Margin top and bottom instead of left/right */
+}
+
+#export-button {
+    background-color: rgba(76, 175, 80, 0.9);
+    color: white;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+    margin-top: 20px; /* Add space above export button */
+    display: flex;
+    flex-direction: column; /* Stack icon and text vertically */
+    align-items: center;
+    justify-content: center;
+    width: 50px; /* Wider to fit text */
+    height: auto; /* Auto height for content */
+    padding: 10px 5px; /* Adjust padding */
+}
+
+#export-button:hover {
+    background-color: rgba(56, 142, 60, 0.9);
+}
+
+#export-button i {
+    /* Only show the icon, no text in vertical orientation */
+    margin: 0 0 5px 0; /* Add margin below icon */
+    font-size: 16px; /* Slightly larger icon */
+}
+
+#export-button .export-text {
+    display: block; /* Show text */
+    font-size: 10px; /* Smaller text */
+    text-align: center;
+    white-space: nowrap;
+}
+
+#notebook-pages-container {
+    flex-grow: 1; /* Allow page container to fill remaining space */
+    display: flex;
+    justify-content: center; /* Center pages horizontally */
+    align-items: center; /* Center pages vertically */
+    gap: 35px; /* Space between pages to match book crease */
+    height: 100%; /* Try to use available height */
+    position: relative; /* For positioning page controls */
+    max-width: calc(100% - 140px); /* More room for wider toolbar */
+    padding: 0 2%; /* Add some padding */
+    /* Shift pages left */
+    margin-left: 114px; /* Increased negative margin to shift pages further left */
+}
+
+.notebook-page { /* Style for the container of title/content */
+    width: 44%; /* Narrower pages */
+    height: 95%; /* Taller pages to fit book */
+    max-height: 700px; /* Increased maximum height */
+    box-sizing: border-box;
+    border: 1px solid rgba(204, 204, 204, 0.2); /* Even more transparent border */
+    border-radius: 8px;
+    /* padding: 0.5rem 1rem; */ /* Padding removed, handled by children */
+    font-family: 'Tiempos Text', serif;
+    /* font-size: 1.1rem; */ /* Font size handled by children */
+    /* line-height: 1.6; */ /* Line height handled by children */
+    background-color: rgba(253, 250, 246, 0.25); /* Even more transparent background */
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.04);
+    backdrop-filter: blur(2px); /* Further reduced blur */
+    transition: transform 0.5s ease-in-out;
+    overflow: hidden; /* Hide overflow from container */
+    /* Use flexbox to stack title, hr, and content */
+    display: flex;
+    flex-direction: column;
+    /* outline: none; */ /* Outline removed, handled by children */
+    /* Vertically position the pages precisely */
+    margin-top: -8px; /* Slight adjustment upward */
+}
+
+.notebook-page-title,
+.notebook-page-content {
+    padding: 0.5rem 1rem; /* Apply padding to children */
+    font-size: 1.1rem; /* Apply font size */
+    line-height: 1.6; /* Apply line height */
+    outline: none; /* Remove default focus outline */
+    -webkit-user-modify: read-write-plaintext-only; /* Optional: Try to enforce plain text pasting */
+    word-wrap: break-word; /* Ensure long words wrap */
+    white-space: pre-wrap; /* Preserve whitespace and wrap lines */
+    overflow-y: auto; /* Allow scrolling within each part */
+}
+
+.notebook-page-title {
+    flex-shrink: 0; /* Prevent title from shrinking */
+    min-height: 2em; /* Ensure title area has some minimum height */
+    /* Additional styling for title if needed */
+}
+
+.notebook-page-content {
+    flex-grow: 1; /* Allow content area to fill remaining space */
+}
+
+/* Style for the horizontal divider */
+hr.page-divider {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.4); /* Simple dark line */
+    margin: 0.2rem 1rem; /* Margins top/bottom and left/right */
+    flex-shrink: 0; /* Prevent hr from shrinking */
+}
+
+/* Different styling for left and right pages */
+#notebook-page-1 {
+    /* Left page specific styles */
+    margin-right: 5px; /* Adjust spacing on right side */
+    margin-left: 5px; /* Adjust spacing on left side */
+}
+
+#notebook-page-2 {
+    /* Right page specific styles */
+    margin-left: 5px; /* Adjust spacing on left side */
+}
+
+/* Placeholder simulation for the new contenteditable divs */
+.notebook-page-title:empty::before,
+.notebook-page-content:empty::before {
+    content: attr(data-placeholder);
+    color: rgba(153, 153, 153, 0.6); /* More transparent placeholder text */
+    pointer-events: none; /* Don't allow clicking the placeholder */
+    display: block; /* Required for content to show */
+}
+
+/* Remove focus styles from parent, keep for children if desired (currently none) */
+/* .notebook-page:focus { ... } */
+
+/* Add focus styles for children if needed, e.g.: */
+/*
+.notebook-page-title:focus,
+.notebook-page-content:focus {
+    box-shadow: 0 0 0 1px rgba(66, 135, 245, 0.2); 
+}
+*/
+
+/* Navigation controls for pages - adjust position */
+#page-nav-controls {
+    position: absolute;
+    bottom: 5%; /* Position closer to the bottom of the notebook */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 15px;
+    background-color: rgba(245, 242, 238, 0.5); /* More transparent */
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px);
+}
+
+.page-indicator {
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+}
+
+.page-nav-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #444;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.page-nav-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.page-nav-button:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Page flip animation */
+@keyframes flipPage {
+    0% { 
+        transform: rotateY(0deg) translateX(0); 
+        opacity: 1;
+        z-index: 10;
+    }
+    25% { 
+        transform: rotateY(30deg) translateX(-30px); 
+        opacity: 0.7;
+        z-index: 10; 
+    }
+    50% { 
+        transform: rotateY(90deg) translateX(-80px); 
+        opacity: 0.5;
+        z-index: 5;
+    }
+    75% { 
+        transform: rotateY(30deg) translateX(-30px); 
+        opacity: 0.7;
+        z-index: 5;
+    }
+    100% { 
+        transform: rotateY(0deg) translateX(0); 
+        opacity: 1;
+        z-index: 10;
+    }
+}
+
+.flip-animation {
+    animation: flipPage 0.7s ease-in-out;
+    transform-origin: center left;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    backface-visibility: hidden;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Style for fading out the book image */
+#reading-image.fade-out-quick {
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+    pointer-events: none; /* Disable clicking while faded */
+}
+
+/* Export menu dropdown - adjust position for vertical toolbar */
+.export-dropdown {
+    position: fixed;
+    top: auto; /* Remove top positioning */
+    bottom: 20px; /* Position from bottom */
+    right: 90px; /* Position to the left of the toolbar */
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 6px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    padding: 8px 0;
+    z-index: 1500;
+    min-width: 150px;
+    display: none;
+    backdrop-filter: blur(10px);
+    pointer-events: auto;
+}
+
+.export-dropdown.show {
+    display: block;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+.export-option {
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.export-option:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* === REMOVED Notebook Area Styles === */
+/*
+.notebook-area {
+    width: 100%; 
+    box-sizing: border-box; 
+    padding: 2rem;
+    background-color: #ffffff; 
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-top: 2rem; 
+}
+
+.notebook-area h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.notebook-area p {
+    color: #555;
+    margin-bottom: 1.5rem;
+}
+
+#notebook-entry {
+    width: 100%;
+    min-height: 200px; 
+    box-sizing: border-box;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: inherit; 
+    font-size: 1rem;
+    resize: vertical; 
+    margin-bottom: 1rem;
+}
+
+#save-note-btn {
+    padding: 0.8rem 1.5rem;
+    background-color: #007bff; 
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+#save-note-btn:hover {
+    background-color: #0056b3;
+}
+*/ 

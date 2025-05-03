@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Station | thvlayu</title>
+    <link rel="stylesheet" href="Library.css">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tiempos+Headline:wght@700&family=Tiempos+Text:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Library for HTML to Canvas rendering (for Image export) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+        integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+    <script src="script.js" defer></script>
+    <script src="Library.js" defer></script>
+</head>
+<body>
+    <main class="container">
+        <!-- === Train Station Square === -->
+        <section id="train-station-square" class="pixel-art-section">
+            <div class="station-backdrop">
+                <div id="seven-segment-display">
+                    <span id="display-line-1">AWAITING SCHEDULE</span>
+                    <span id="display-line-2"></span>
+                </div>
+                <div class="track-area">
+                    <div id="train" class="hidden">
+                        <button id="get-in-btn">Board Train</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- === End Train Station Square === -->
+    </main>
+
+    <!-- === Library Entrance Area (full width) === -->
+    <section class="library-entrance-area">
+        <div class="library-container">
+            <img src="Assets/library.jpg" alt="Pixel Art Library Entrance" class="library-image">
+            <div class="timer-display"></div>
+            <div class="hover-text">Get Inside</div>
+        </div>
+    </section>
+    <!-- === End Library Entrance Area === -->
+
+    <!-- === Reading Area (Initially Hidden, likely needs adjustments too) === -->
+    <section id="reading-area" class="reading-section">
+        <img id="reading-image" src="Assets/notebook.png" alt="Animated view inside a library">
+    </section>
+    <!-- === End Reading Area === -->
+
+    <!-- === Text Editing Overlay === -->
+    <div id="text-editor-overlay">
+        <div id="notebook-pages-container">
+            <!-- Page 1 Structure -->
+            <div id="notebook-page-1" class="notebook-page">
+                <div class="notebook-page-title" contenteditable="true" data-placeholder="Title..."></div>
+                <hr class="page-divider">
+                <div class="notebook-page-content" contenteditable="true" data-placeholder="Content..."></div>
+            </div>
+            <!-- Page 2 Structure -->
+            <div id="notebook-page-2" class="notebook-page">
+                <div class="notebook-page-title" contenteditable="true" data-placeholder="Title..."></div>
+                <hr class="page-divider">
+                <div class="notebook-page-content" contenteditable="true" data-placeholder="Content..."></div>
+            </div>
+            
+            <!-- Page navigation controls -->
+            <div id="page-nav-controls">
+                <button class="page-nav-button" id="prev-page" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <span class="page-indicator">Page <span id="current-page">1-2</span> of <span id="total-pages">2</span></span>
+                <button class="page-nav-button" id="next-page" disabled>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div id="format-toolbar">
+            <!-- Toolbar now vertical on right side -->
+            <div class="toolbar-group">
+                <button class="toolbar-button" id="format-bold" title="Bold (Ctrl+B)">
+                    <i class="fas fa-bold"></i>
+                </button>
+                <button class="toolbar-button" id="format-italic" title="Italic (Ctrl+I)">
+                    <i class="fas fa-italic"></i>
+                </button>
+                <button class="toolbar-button" id="format-underline" title="Underline (Ctrl+U)">
+                    <i class="fas fa-underline"></i>
+                </button>
+                <button class="toolbar-button" id="format-strikethrough" title="Strikethrough">
+                    <i class="fas fa-strikethrough"></i>
+                </button>
+                
+                <div class="toolbar-separator"></div>
+                
+                <button class="toolbar-button" id="format-heading" title="Heading">
+                    <i class="fas fa-heading"></i>
+                </button>
+                <button class="toolbar-button" id="format-quote" title="Blockquote">
+                    <i class="fas fa-quote-right"></i>
+                </button>
+                <button class="toolbar-button" id="format-code" title="Code">
+                    <i class="fas fa-code"></i>
+                </button>
+                
+                <div class="toolbar-separator"></div>
+                
+                <button class="toolbar-button" id="format-list-ul" title="Bullet List">
+                    <i class="fas fa-list-ul"></i>
+                </button>
+                <button class="toolbar-button" id="format-list-ol" title="Numbered List">
+                    <i class="fas fa-list-ol"></i>
+                </button>
+                <button class="toolbar-button" id="format-indent" title="Indent">
+                    <i class="fas fa-indent"></i>
+                </button>
+                <button class="toolbar-button" id="format-outdent" title="Outdent">
+                    <i class="fas fa-outdent"></i>
+                </button>
+                
+                <div class="toolbar-separator"></div>
+                
+                <button class="toolbar-button" id="format-align-left" title="Align Left">
+                    <i class="fas fa-align-left"></i>
+                </button>
+                <button class="toolbar-button" id="format-align-center" title="Align Center">
+                    <i class="fas fa-align-center"></i>
+                </button>
+                <button class="toolbar-button" id="format-align-right" title="Align Right">
+                    <i class="fas fa-align-right"></i>
+                </button>
+                <button class="toolbar-button" id="format-align-justify" title="Justify">
+                    <i class="fas fa-align-justify"></i>
+                </button>
+                
+                <div class="toolbar-separator"></div>
+                
+                <button class="toolbar-button" id="format-clear" title="Clear Formatting">
+                    <i class="fas fa-eraser"></i>
+                </button>
+            </div>
+            
+            <!-- Export button at bottom of toolbar -->
+            <button id="export-button" title="Export">
+                <i class="fas fa-download"></i>
+                <span class="export-text">Export</span>
+            </button>
+        </div>
+        
+        <!-- Export dropdown menu - moved outside toolbar -->
+        <div class="export-dropdown" id="export-options">
+            <div class="export-option" data-format="md">
+                <i class="fas fa-file-alt"></i> Markdown (.md)
+            </div>
+            <div class="export-option" data-format="txt">
+                <i class="fas fa-file-alt"></i> Text File (.txt)
+            </div>
+            <div class="export-option" data-format="pdf">
+                <i class="fas fa-file-pdf"></i> PDF Document (.pdf)
+            </div>
+            <div class="export-option" data-format="img">
+                <i class="fas fa-file-image"></i> Images (.png)
+            </div>
+        </div>
+    </div>
+    <!-- === End Text Editing Overlay === -->
+
+</body>
+</html> 
