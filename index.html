@@ -3,201 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>thvlayu | Curated Digital Experience</title>
+    <title>Document</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Tiempos+Headline:wght@700&family=Tiempos+Text:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="script.js" defer></script>
 </head>
 <body>
-    <div class="mobile-menu-overlay"></div>
-    <header class="main-header">
-        <div class="container">
-            <div class="logo">
-                <img src="Assets/Notebook logo.jpg" alt="thvlayu logo">
-                <div>
-                    <h1>thvlayu</h1>
-                    <span>be delusional and do anything you want</span>
-                </div>
-            </div>
-            <button class="mobile-menu-btn" aria-label="Toggle menu">
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-            </button>
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="#" class="active">Home</a></li>
-                    <li><a href="#">Thoughts</a></li>
-                    <li><a href="#">Projects</a></li>
-                    <li><a href="#">Resources</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
-            </nav>
+    <div class="invitation-container">
+        <img src="Assets/main.png" alt="Invitation Card" class="invitation-image">
+        <div class="invitation-text">
+            <p id="line1">You have</p>
+            <p id="line2">been</p>
+            <p id="line3">Invited</p>
         </div>
-    </header>
+    </div>
 
-    <main class="container">
-        <section class="hero">
-            <div class="hero-content">
-                <!-- Wrap existing content -->
-                <div class="hero-standard-content">
-                    <h2>Digital <span class="highlight">Exploration</span></h2>
-                    <p class="subtitle">Navigating the frontiers of innovation through immersive experiences and emerging technologies.</p>
-                    <div class="hero-interactive">
-                        <div class="interactive-card" data-category="immersive">
-                            <i class="fas fa-vr-cardboard"></i>
-                            <h4>Immersive</h4>
-                            <p>XR & spatial computing</p>
-                        </div>
-                        <div class="interactive-card" data-category="intelligence">
-                            <i class="fas fa-brain"></i>
-                            <h4>Intelligence</h4>
-                            <p>AI-powered experiences</p>
-                        </div>
-                        <div class="interactive-card" data-category="innovation">
-                            <i class="fas fa-lightbulb"></i>
-                            <h4>Innovation</h4>
-                            <p>Future-forward thinking</p>
-                        </div>
-                    </div>
-                </div>
-                <!-- Add the new quote box (initially hidden) -->
-                <div class="hero-quote-box hidden">
-                    <blockquote>
-                        <p>"The future belongs to those who believe in the beauty of their dreams."</p>
-                        <footer>— Eleanor Roosevelt</footer>
-                    </blockquote>
-                </div>
-            </div>
-            <!-- Add content specific to bg1 -->
-            <div id="hero-poem-content" class="hero-specific-content hidden">
-                <p>Green shoots emerge now,<br>Sunlight warms the sleeping earth,<br>Life awakens slow.</p>
-                <p>Petals unfurl soft,<br>Colors paint the barren branch,<br>Beauty finds its voice.</p>
-            </div>
-            <div id="hero-haiku-content" class="hero-specific-content hidden">
-                <p>Soft breeze whispers low,<br>Cherry blossoms gently fall,<br>Spring's sweet, fleeting sigh.</p>
-            </div>
-            <!-- Add content specific to bg2 -->
-            <div id="hero-calendar-content" class="hero-specific-content hero-bg2-element hidden">
-                <div id="calendar-month">Month</div>
-                <div id="calendar-day">00</div>
-            </div>
-            <div id="hero-clock-widget" class="hero-specific-content hero-bg2-element hidden">
-                <div id="clock-time">00:00 AM/PM</div>
-                <div id="clock-date">Day, Month 00</div>
-                <div id="reminder-text">Seize the moment.</div>
-            </div>
-        </section>
+    <!-- Add more content below to enable scrolling -->
+    <div style="height: 200vh;">
+        Scroll down...
+    </div>
 
-        <!-- New Featured Insight Section -->
-        <section class="featured-insight">
-            <h4>Featured Insight</h4>
-            <div class="insight-content">
-                <blockquote>
-                    "The medium is the message. Our tools shape us as much as we shape them."
-                </blockquote>
-                <a href="#" class="insight-link">Explore Further &rarr;</a>
-            </div>
-        </section>
-
-        <!-- === Train Station Square === -->
-        <section id="train-station-square" class="pixel-art-section">
-            <div class="station-backdrop">
-                <!-- Background image via CSS -->
-                <!-- ADD START: Seven Segment Display -->
-                <div id="seven-segment-display">
-                    <span id="display-line-1">AWAITING SCHEDULE</span>
-                    <span id="display-line-2"></span>
-                </div>
-                <!-- ADD END: Seven Segment Display -->
-                <!--
-                <div id="departure-board">
-                    <p>Next train: Checking schedule...</p>
-                    <p>Status: ---</p>
-                    <p>Destination: ---</p>
-                </div>
-                -->
-                <!-- <div id="ticket-counter" title="Buy Tickets"></div> -->
-                <div class="track-area">
-                    <div id="train" class="hidden">
-                        <!-- Train image/content via CSS/JS -->
-                        <button id="get-in-btn">Board Train</button>
-                    </div>
-                </div>
-            </div>
-            <!--
-            <div id="ticket-modal" class="hidden">
-                <h4>Tickets Available</h4>
-                <ul id="ticket-list">
-                    // Ticket links will be added by JS
-                </ul>
-                <button id="close-ticket-modal">Close</button>
-            </div>
-            -->
-        </section>
-        <!-- === End Train Station Square === -->
-
-        <!-- New Personal Annotation Section -->
-        <section class="personal-annotation-box">
-            <h3 class="annotation-title">Personal Annotation</h3>
-            <p class="annotation-text">
-                "The tools we use to process information fundamentally shape the thoughts we can have. This collection represents my ongoing attempt to curate the signal from the noise, and occasionally add my own reverberations to the chorus."
-            </p>
-            <div class="annotation-signature">by thvlayu</div>
-        </section>
-        <!-- End New Personal Annotation Section -->
-
-        <section class="newsletter-section">
-            <div class="newsletter-content">
-                <h3><i class="fas fa-paper-plane"></i> Resonance Frequency</h3>
-                <p>Subscribe for periodic transmissions of what's capturing my attention.</p>
-                <form id="newsletter-form" class="newsletter-form">
-                    <input type="email" id="email" placeholder="your@email.com" required>
-                    <textarea id="feedback" placeholder="What frequencies are you attuned to? (Optional)"></textarea>
-                    <button type="submit">Tune In</button>
-                </form>
-                <div class="form-message" id="form-message"></div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="main-footer">
-        <div class="container">
-            <div class="footer-logo">
-                <h4>thvlayu</h4>
-                <p>be delusional and do anything you want</p>
-            </div>
-            <div class="footer-links">
-                <div class="links-column">
-                    <h5>Explore</h5>
-                    <ul>
-                        <li><a href="#">Thoughts</a></li>
-                        <li><a href="#">Projects</a></li>
-                        <li><a href="#">Resources</a></li>
-                    </ul>
-                </div>
-                <div class="links-column">
-                    <h5>Connect</h5>
-                    <ul>
-                        <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
-                        <li><a href="#"><i class="fab fa-github"></i> GitHub</a></li>
-                        <li><a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
-                    </ul>
-                </div>
-                <div class="links-column">
-                    <h5>Legal</h5>
-                    <ul>
-                        <li><a href="#">Privacy</a></li>
-                        <li><a href="#">Terms</a></li>
-                        <li><a href="#">Contact</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="copyright">
-            <p>&copy; 2025 thvlayu. All rights reserved.</p>
-        </div>
-    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+    <script src="script.js"></script>
 </body>
-</html>
+</html> 

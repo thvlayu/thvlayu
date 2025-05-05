@@ -1,937 +1,112 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Set up background slideshow for hero section
-    const heroSection = document.querySelector('.hero');
-    if (heroSection) {
-        // Background images array
-        const bgImages = [
-            "Assets/bg0.jpeg",
-            "Assets/bg1.jpeg",
-            "Assets/bg2.jpeg",
-            "Assets/bg3.jpeg",
-            "Assets/bg4.jpeg",
-            "Assets/bg5.jpeg",
-            "Assets/bg6.jpeg"
-        ];
+// Basic script
+console.log("Script loaded!");
 
-        let currentImageIndex = 0;
-        const bgDivs = []; // Array to hold references to the background divs
+gsap.registerPlugin(ScrollTrigger, SplitText);
 
-        // Basic styling for the hero section
-        heroSection.style.position = "relative";
-        heroSection.style.marginTop = "1.5rem";
-        heroSection.style.overflow = "hidden";
+// Wait for the DOM to be fully loaded
+document.addEventListener("DOMContentLoaded", function() {
 
-        // --- START: Create Background Layers ---
-        // Create and append background divs for each image BUT keep initial opacity 0 for all but first
-        bgImages.forEach((imgSrc, index) => {
-            const bgDiv = document.createElement('div');
-            bgDiv.className = 'hero-bg-slide';
-            bgDiv.style.backgroundImage = `url('${imgSrc}')`; // Set the bg image URL
-            bgDiv.style.position = 'absolute';
-            bgDiv.style.top = '0';
-            bgDiv.style.left = '0';
-            bgDiv.style.width = '100%';
-            bgDiv.style.height = '100%';
-            bgDiv.style.backgroundSize = 'cover';
-            bgDiv.style.backgroundPosition = 'center';
-            // Start all subsequent images as hidden, first one potentially visible later
-            bgDiv.style.opacity = (index === 0) ? '1' : '0';
-            bgDiv.style.transition = 'opacity 1.5s ease-in-out';
-            bgDiv.style.zIndex = '0';
+    const container = document.querySelector(".invitation-container");
+    const image = document.querySelector(".invitation-image");
+    const textElements = gsap.utils.toArray(".invitation-text p");
 
-            heroSection.appendChild(bgDiv);
-            bgDivs.push(bgDiv);
-        });
-        // --- END: Create Background Layers ---
-
-
-        // --- START: Preload Images and Start Slideshow ---
-        let imagesLoadedCount = 0;
-        const totalImages = bgImages.length;
-
-
-
-        console.log("Preloading background images...");
-        bgImages.forEach((imgSrc, index) => {
-            const img = new Image();
-            img.onload = startSlideshowIfReady; // Increment counter and check if all loaded
-            img.onerror = () => {
-                console.error(`Failed to load background image: ${imgSrc}`);
-                startSlideshowIfReady(); // Still count it so slideshow can start (might miss this image)
-            };
-            img.src = imgSrc; // Start loading the image
-        });
-
-        // Get references to the content elements
-        const standardContent = heroSection.querySelector('.hero-standard-content');
-        const quoteBox = heroSection.querySelector('.hero-quote-box');
-        const poemContent = heroSection.querySelector('#hero-poem-content');
-        const haikuContent = heroSection.querySelector('#hero-haiku-content');
-        const calendarContent = heroSection.querySelector('#hero-calendar-content');
-        const clockWidget = heroSection.querySelector('#hero-clock-widget');
-
-        // --- Clock and Calendar Update Functions ---
-        const timeEl = document.getElementById('clock-time');
-        const dateEl = document.getElementById('clock-date');
-        const monthEl = document.getElementById('calendar-month');
-        const dayEl = document.getElementById('calendar-day');
-        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-        function updateTimeAndCalendar() {
-            const now = new Date();
-            const month = now.getMonth();
-            const dayOfWeek = now.getDay();
-            const dayOfMonth = now.getDate();
-            const hours = now.getHours();
-            const hoursForClock = hours % 12 === 0 ? 12 : hours % 12; // Convert 0 to 12 for 12hr format
-            const minutes = now.getMinutes();
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-
-            if (timeEl) {
-                timeEl.innerHTML = `${hoursForClock}:${minutes < 10 ? '0' + minutes : minutes} <span style="font-size: 1.4rem;">${ampm}</span>`;
-            }
-            if (dateEl) {
-                dateEl.textContent = `${days[dayOfWeek]}, ${months[month]} ${dayOfMonth}`;
-            }
-            if (monthEl) {
-                monthEl.textContent = months[month];
-            }
-            if (dayEl) {
-                dayEl.textContent = dayOfMonth < 10 ? '0' + dayOfMonth : dayOfMonth;
-            }
-        }
-
-        // Update time/calendar immediately and then every second
-        updateTimeAndCalendar();
-        setInterval(updateTimeAndCalendar, 1000);
-        // ------------------------------------------
-
-        // Function to update hero content visibility based on index
-        function updateHeroContentVisibility(index) {
-            // Ensure all elements exist before trying to modify them
-            if (!standardContent || !quoteBox || !poemContent || !haikuContent || !calendarContent || !clockWidget) {
-                console.error("Hero content elements not found!");
-                return;
-            }
-
-            // Default: Hide all specific content initially
-            standardContent.classList.add('hidden');
-            quoteBox.classList.add('hidden');
-            poemContent.classList.add('hidden');
-            haikuContent.classList.add('hidden');
-            calendarContent.classList.add('hidden'); // Hide bg2 elements
-            clockWidget.classList.add('hidden'); // Hide bg2 elements
-
-            if (index === 0) { // Show quote box for the first image
-                quoteBox.classList.remove('hidden');
-            } else if (index === 1) { // Show poem and haiku for the second image
-                poemContent.classList.remove('hidden');
-                haikuContent.classList.remove('hidden');
-            } else if (index === 2) { // Show calendar and clock for the third image
-                calendarContent.classList.remove('hidden');
-                clockWidget.classList.remove('hidden');
-            } else { // Show standard content for other images (currently hidden by CSS)
-                // standardContent.classList.remove('hidden');
-            }
-
-            void heroSection.offsetWidth;
-        }
-
-        // Slideshow function (modified to update content visibility)
-        function changeBackground() {
-            const previousImageIndex = currentImageIndex;
-            currentImageIndex = (currentImageIndex + 1) % bgImages.length;
-
-            // Fade background images
-            if (bgDivs[previousImageIndex]) {
-                 bgDivs[previousImageIndex].style.opacity = '0';
-            }
-            if (bgDivs[currentImageIndex]) {
-                bgDivs[currentImageIndex].style.opacity = '1';
-            }
-
-            // Update content visibility
-            updateHeroContentVisibility(currentImageIndex);
-        }
-
-        // Initial content visibility setup (after preloading)
-        function startSlideshowIfReady() {
-            imagesLoadedCount++;
-            if (imagesLoadedCount === totalImages) {
-                console.log("All background images preloaded. Starting slideshow.");
-                // Set initial content visibility based on the starting image (index 0)
-                updateHeroContentVisibility(currentImageIndex); // This will now correctly show the quote box first
-                // Ensure the first background image div is visible
-                if (bgDivs.length > 0) {
-                   bgDivs[0].style.opacity = '1';
-                }
-                // Start the interval timer
-                setInterval(changeBackground, 7000);
-            }
-        }
-        // --- END: Preload Images and Start Slideshow ---
-
-    } // End of if (heroSection)
-
-    // Ensure hero content is above the background layers (Keep as is)
-    const heroContent = document.querySelector('.hero-content');
-    if (heroContent) {
-        heroContent.style.position = "relative";
-        heroContent.style.zIndex = "1";
+    // Ensure elements exist before animating
+    if (!container || !image || textElements.length === 0) {
+        console.error("Required elements for animation not found!");
+        return;
     }
 
-    // --- Rest of your existing JavaScript code ---
-    // (Typing animation, newsletter fade, mobile menu, stats, trends, news rendering, filters, load more, form submission)
-    // Make sure all necessary checks (if elements exist) and variable scopes are correct as refined previously.
+    // --- Entrance Animation --- 
+    // Use SplitText for entrance
+    const splitEntrance = new SplitText(textElements, { type: "chars, words" });
 
-    // Typing animation...
-    const noteContent = document.querySelector('.note-content p');
-    if (noteContent) { /* ... rest of typing animation code ... */
-        const text = noteContent.textContent;
-        noteContent.textContent = '';
-        let i = 0;
-        const typing = setInterval(() => {
-            if (i < text.length) {
-                noteContent.textContent += text.charAt(i);
-                i++;
-            } else {
-                clearInterval(typing);
-                noteContent.style.borderRight = 'none';
-            }
-        }, 50);
-    }
+    // Set initial states
+    gsap.set(image, { opacity: 0, scale: 0.9 });
+    gsap.set(splitEntrance.chars, { opacity: 0, y: 20 });
 
-
-    // Fade in animation for newsletter...
-     const newsletterElements = document.querySelectorAll('.newsletter-content h3, .newsletter-content p');
-    newsletterElements.forEach((el, index) => {
-        setTimeout(() => {
-            el.style.opacity = '1';
-        }, index * 500 + 500);
+    // Animate image first
+    gsap.to(image, { 
+        opacity: 1, 
+        scale: 1, 
+        duration: 1.5, 
+        ease: "power2.out" 
     });
 
+    // Staggered animation for characters
+    gsap.to(splitEntrance.chars, { 
+        opacity: 1, 
+        y: 0, 
+        duration: 0.8, 
+        ease: "power2.out", 
+        stagger: 0.03,
+        delay: 0.5
+    });
 
-    // Mobile menu functionality...
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    if (mobileMenuBtn) { /* ... rest of mobile menu code ... */
-        const mobileMenuContent = document.createElement('div');
-        mobileMenuContent.className = 'mobile-menu-content';
-        mobileMenuContent.innerHTML = `
-            <h3 class="mobile-menu-heading">Navigation</h3>
-            <ul>
-                <li><a href="#" class="active">Home</a></li>
-                <li><a href="#">Thoughts</a></li>
-                <li><a href="#">Projects</a></li>
-                <li><a href="#">Resources</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        `;
-        document.body.appendChild(mobileMenuContent);
+    // --- ScrollTrigger Animation --- 
+    // Use a separate SplitText instance for the exit animation within ScrollTrigger
+    const splitExit = new SplitText(textElements, { type: "chars" });
 
-        const closeBtn = document.createElement('button');
-        closeBtn.className = 'close-menu-btn';
-        closeBtn.innerHTML = '&times;';
-        closeBtn.style.position = 'absolute';
-        closeBtn.style.top = '20px';
-        closeBtn.style.right = '20px';
-        closeBtn.style.background = 'none';
-        closeBtn.style.border = 'none';
-        closeBtn.style.fontSize = '24px';
-        closeBtn.style.cursor = 'pointer';
-        closeBtn.style.color = 'var(--text-color)';
-        mobileMenuContent.appendChild(closeBtn);
-
-        const overlay = document.querySelector('.mobile-menu-overlay');
-        const hamburgerBtn = document.querySelector('.mobile-menu-btn'); // Re-select just in case
-
-        function toggleMenu() {
-            document.body.classList.toggle('menu-open');
-            mobileMenuContent.classList.toggle('menu-open');
-            if (overlay) overlay.classList.toggle('visible'); // Check if overlay exists
-            if (hamburgerBtn) hamburgerBtn.classList.toggle('menu-open'); // Check if hamburgerBtn exists
+    let tl = gsap.timeline({
+        scrollTrigger: {
+            trigger: container,
+            start: "top top",
+            end: "+=250%",
+            scrub: 1,
+            pin: true,
+            pinSpacing: true,
+            markers: true
         }
+    });
 
-        if (hamburgerBtn) hamburgerBtn.addEventListener('click', toggleMenu);
-        if (overlay) overlay.addEventListener('click', toggleMenu);
-        if (closeBtn) closeBtn.addEventListener('click', toggleMenu);
-    }
-
-
-    // Animate stats...
-     function animateValue(id, start, end, duration) {
-        const obj = document.getElementById(id);
-        if (!obj) return; // Add check if element exists
-        let startTimestamp = null;
-        const step = (timestamp) => {
-            if (!startTimestamp) startTimestamp = timestamp;
-            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            obj.innerHTML = Math.floor(progress * (end - start) + start);
-            if (progress < 1) {
-                window.requestAnimationFrame(step);
+    // Add animations to the timeline
+    tl
+        // 1. Staggered fade out for the text characters
+        .to(splitExit.chars, {
+            opacity: 0,
+            y: -15,
+            scale: 0.8,
+            duration: 0.15,
+            stagger: {
+                amount: 0.3,
+                from: "random"
             }
-        };
-        window.requestAnimationFrame(step);
-    }
-
-    animateValue("update-frequency", 0, 24, 2000);
-
-
-    // Newsletter form...
-    const newsletterForm = document.getElementById('newsletter-form');
-    const formMessage = document.getElementById('form-message');
-    if (newsletterForm && formMessage) { /* ... rest of form submission code ... */
-         newsletterForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const emailEl = document.getElementById('email');
-            const feedbackEl = document.getElementById('feedback');
-            if (!emailEl) return;
-
-            const email = emailEl.value;
-            const feedback = feedbackEl ? feedbackEl.value : '';
-
-            if (!email || !/\\S+@\\S+\\.\\S+/.test(email)) { // Basic email format check
-                formMessage.textContent = 'Please enter a valid email address.';
-                formMessage.className = 'form-message error visible';
-                return;
-            }
-
-            formMessage.textContent = 'Thank you for tuning in. Your frequency has been noted.';
-            formMessage.className = 'form-message success visible';
-            newsletterForm.reset();
-            setTimeout(() => {
-                formMessage.textContent = '';
-                formMessage.className = 'form-message';
-            }, 5000);
-            console.log('Newsletter submission:', { email, feedback });
-        });
-    }
-
-    // === Train Station Square Logic ===
-    const trainStationSquare = document.getElementById('train-station-square');
-    if (trainStationSquare) {
-        const trainElement = document.getElementById('train');
-        const getInBtn = document.getElementById('get-in-btn');
-        // ADD START: Get display elements
-        const displayLine1 = document.getElementById('display-line-1');
-        const displayLine2 = document.getElementById('display-line-2');
-        // ADD END: Get display elements
-
-        // ADD START: Audio Setup
-        const trainSound = new Audio('Assets/Trainsound.mp3');
-        trainSound.preload = 'auto';
-        const brakeSound = new Audio('Assets/trainbreaks.mp3');
-        brakeSound.preload = 'auto';
-        const stationAmbiance = new Audio('Assets/stationambience.mp3'); // <<< ADDED Ambience Audio
-        stationAmbiance.preload = 'auto'; // <<< ADDED
-        stationAmbiance.loop = true;      // <<< ADDED Loop
-        const trainDoorSound = new Audio('Assets/Traindoor.mp3'); // <<< ADDED Train Door Sound
-        trainDoorSound.preload = 'auto';                        // <<< ADDED
-        let arrivalFadeOutIntervalId = null; // Keep track of arrival fade interval
-        let brakeFadeOutIntervalId = null; // Keep track of brake fade interval
-        let arrivalSoundTimeoutId = null;
-        let brakeSoundTimeoutId = null;
-        let departureFadeIntervalId = null;
-        let ambienceFadeInIntervalId = null;  // <<< ADDED Ambience fade in interval ID
-        let ambienceFadeOutIntervalId = null; // <<< ADDED Ambience fade out interval ID
-        // ADD END: Audio Setup
-
-        // --- Configuration ---
-        const minArrivalDelay = 8 * 1000; // 8 seconds
-        const maxArrivalDelay = 15 * 1000; // 15 seconds
-        const trainWaitTime = 10 * 1000; // 10 seconds wait before departure
-
-        // Update destinations to use internal links (assuming placeholders for now)
-        const allDestinations = [ // Renamed from randomDestinations
-            { name: "THOUGHTS", url: "Thoughts.html" }, // Use uppercase for display
-            { name: "PROJECTS", url: "Projects.html" },
-            { name: "RESOURCES", url: "Resources.html" },
-            { name: "CONTACT", url: "Contact.html" },
-            { name: "LIBRARY", url: "Library.html" },
-            { name: "HOME", url: "index.html" }
-        ];
-        let shuffledDestinationsQueue = []; // Queue for the current cycle
-
-        let currentTrainArrivalTimeoutId = null;
-        let currentTrainDepartureTimeoutId = null;
-        let currentDepartureCountdownIntervalId = null;
-        let currentTrainDestinationUrl = null;
-        let currentTrainDestinationName = null;
-        let scheduledArrivalTime = null;
-        let scheduledDepartureTime = null;
-        let isTrainPresent = false;
-
-        // --- Helper Functions ---
-        // ADD START: Shuffle Array (Fisher-Yates Algorithm)
-        function shuffleArray(array) {
-            let currentIndex = array.length, randomIndex;
-            // While there remain elements to shuffle.
-            while (currentIndex !== 0) {
-                // Pick a remaining element.
-                randomIndex = Math.floor(Math.random() * currentIndex);
-                currentIndex--;
-                // And swap it with the current element.
-                [array[currentIndex], array[randomIndex]] = [
-                    array[randomIndex], array[currentIndex]];
-            }
-            return array;
-        }
-        // ADD END: Shuffle Array
-
-        // ADD START: Format Time (HH:MM:SS) // Modified signature
-        function formatTime(date) {
-            if (!date) return "--:--:--"; // Changed default format
-            const hours = date.getHours().toString().padStart(2, '0');
-            const minutes = date.getMinutes().toString().padStart(2, '0');
-            const seconds = date.getSeconds().toString().padStart(2, '0'); // Add seconds
-            return `${hours}:${minutes}:${seconds}`; // Include seconds in return
-        }
-        // ADD END: Format Time (HH:MM:SS)
-
-        // ADD START: Format Countdown (MM:SS)
-        function formatCountdown(milliseconds) {
-            if (milliseconds < 0) milliseconds = 0;
-            const totalSeconds = Math.floor(milliseconds / 1000);
-            const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
-            const seconds = (totalSeconds % 60).toString().padStart(2, '0');
-            return `${minutes}:${seconds}`;
-        }
-        // ADD END: Format Countdown (MM:SS)
-
-        // ADD START: Update Display Function
-        function updateDisplay(line1Text = '', line2Text = '') {
-            if (displayLine1) displayLine1.textContent = line1Text;
-            if (displayLine2) displayLine2.textContent = line2Text;
-            console.log(`Display Update: L1="${line1Text}", L2="${line2Text}"`); // Debug log
-        }
-        // ADD END: Update Display Function
-
-        // ADD START: Sound Control Functions
-        function stopTrainSound() {
-            trainSound.pause();
-            brakeSound.pause(); // Stop brake sound too
-            clearTimeout(arrivalSoundTimeoutId);
-            clearTimeout(brakeSoundTimeoutId); // Clear brake timeout
-            clearInterval(departureFadeIntervalId);
-            // Clear arrival fade out interval if active
-            if (arrivalFadeOutIntervalId) {
-                clearInterval(arrivalFadeOutIntervalId);
-                arrivalFadeOutIntervalId = null;
-            }
-            // Clear brake fade out interval if active
-            if (brakeFadeOutIntervalId) {
-                clearInterval(brakeFadeOutIntervalId);
-                brakeFadeOutIntervalId = null;
-            }
-            trainSound.volume = 1; // Reset volume for next play
-            brakeSound.volume = 1; // Reset brake volume
-            console.log("All train sounds stopped.");
-        }
-
-        function playArrivalSound() {
-            stopTrainSound(); // Ensure any previous sound is stopped
-            try {
-                trainSound.currentTime = 11; // Start at 11 seconds
-                trainSound.volume = 1; // Full volume initially
-                trainSound.play().catch(e => console.error("Error starting arrival playback:", e)); // Add catch for play promise
-                console.log("Playing arrival sound (11s - 15.5s, fade 14.5s-15.5s)");
-
-                // Schedule the 1-second fade-out to start after 3.5s (at the 14.5s mark)
-                clearTimeout(arrivalSoundTimeoutId); // Clear previous timeout if any
-                if (arrivalFadeOutIntervalId) clearInterval(arrivalFadeOutIntervalId); // Clear previous interval
-
-                arrivalSoundTimeoutId = setTimeout(() => {
-                    let currentVolume = 1.0;
-                    const fadeDuration = 1000; // 1 second
-                    const fadeSteps = 20; // Smoother fade
-                    const volumeDecrement = 1.0 / fadeSteps;
-                    const intervalTime = fadeDuration / fadeSteps;
-
-                    console.log("Starting arrival sound fade-out (14.5s-15.5s).");
-                    arrivalFadeOutIntervalId = setInterval(() => {
-                        currentVolume -= volumeDecrement;
-                        if (currentVolume <= 0) {
-                            trainSound.volume = 0;
-                            trainSound.pause(); // Stop playback after fade
-                            clearInterval(arrivalFadeOutIntervalId);
-                            arrivalFadeOutIntervalId = null;
-                            console.log("Arrival sound fade-out complete and paused.");
-                        } else {
-                            trainSound.volume = Math.max(0, currentVolume);
-                        }
-                    }, intervalTime);
-
-                }, 3500);
-
-            } catch (error) {
-                console.error("Error playing arrival sound:", error);
-            }
-        }
-
-        function playBrakeSound() {
-            // Don't stop other sounds, just play this one
-            brakeSound.pause(); // Stop previous instance if any
-            clearTimeout(brakeSoundTimeoutId);
-            if (brakeFadeOutIntervalId) clearInterval(brakeFadeOutIntervalId); // Clear previous interval
-
-            try {
-                brakeSound.currentTime = 2; // Start at 2 seconds
-                brakeSound.volume = 1; // Full volume
-                brakeSound.play().catch(e => console.error("Error starting brake playback:", e));
-                console.log("Playing brake sound (2s - 6s, fade 5s-6s)");
-
-                // Schedule the 1-second fade-out to start after 3s (at the 5s mark)
-                clearTimeout(brakeSoundTimeoutId); // Clear previous timeout if any
-
-                brakeSoundTimeoutId = setTimeout(() => {
-                    let currentVolume = 1.0;
-                    const fadeDuration = 1000; // 1 second
-                    const fadeSteps = 20;
-                    const volumeDecrement = 1.0 / fadeSteps;
-                    const intervalTime = fadeDuration / fadeSteps;
-
-                    console.log("Starting brake sound fade-out (5s-6s).");
-                    brakeFadeOutIntervalId = setInterval(() => {
-                        currentVolume -= volumeDecrement;
-                        if (currentVolume <= 0) {
-                            brakeSound.volume = 0;
-                            brakeSound.pause(); // Stop playback after fade
-                            clearInterval(brakeFadeOutIntervalId);
-                            brakeFadeOutIntervalId = null;
-                            console.log("Brake sound fade-out complete and paused.");
-                        } else {
-                            brakeSound.volume = Math.max(0, currentVolume);
-                        }
-                    }, intervalTime);
-
-                }, 3000); // Start fade-out after 3 seconds
-
-            } catch (error) {
-                console.error("Error playing brake sound:", error);
-            }
-        }
-
-        function playDepartureSound() {
-            stopTrainSound(); // Ensure any previous sound is stopped
-            try {
-                trainSound.currentTime = 15; // Start at 15 seconds
-                trainSound.volume = 0; // Start silent for fade-in
-                trainSound.play().catch(e => console.error("Error starting departure playback:", e)); // Add catch for play promise
-                console.log("Playing departure sound (15s - end, fade-in 1s)");
-
-                // Fade-in logic
-                let currentVolume = 0;
-                const fadeDuration = 1000; // 1 second
-                const fadeSteps = 20;
-                const volumeIncrement = 1.0 / fadeSteps;
-                const intervalTime = fadeDuration / fadeSteps;
-
-                // Clear previous interval if any
-                if (departureFadeIntervalId) clearInterval(departureFadeIntervalId);
-
-                departureFadeIntervalId = setInterval(() => {
-                    currentVolume += volumeIncrement;
-                    if (currentVolume >= 1.0) {
-                        trainSound.volume = 1.0;
-                        clearInterval(departureFadeIntervalId);
-                        departureFadeIntervalId = null; // Clear the ID
-                        console.log("Departure sound fade-in complete.");
-                    } else {
-                        trainSound.volume = currentVolume;
-                    }
-                }, intervalTime);
-
-                // Let sound play to end - remove automatic stop based on animation
-                // Check if sound finished naturally and log it
-                trainSound.onended = () => {
-                    console.log("Departure sound finished playing naturally.");
-                    // We might not need to stop explicitly, but good practice to reset
-                    stopTrainSound();
-                };
-
-            } catch (error) {
-                console.error("Error playing departure sound:", error);
-            }
-        }
-        // ADD END: Sound Control Functions
-
-        // ADD START: Ambience Sound Control Functions
-        function fadeAudio(audioElement, targetVolume, duration, intervalIdRef, onComplete) {
-            // Clear any existing interval for this audio element using the reference object
-            if (intervalIdRef.id) {
-                clearInterval(intervalIdRef.id);
-                intervalIdRef.id = null;
-            }
-
-            const fadeSteps = 30; // More steps for smoother fade (e.g., 50ms intervals for 1.5s)
-            const intervalTime = duration / fadeSteps;
-            const startVolume = audioElement.volume;
-            const volumeChange = (targetVolume - startVolume) / fadeSteps;
-            let currentStep = 0;
-
-            console.log(`Fading audio ${audioElement.src.split('/').pop()} from ${startVolume.toFixed(2)} to ${targetVolume.toFixed(2)} over ${duration}ms`);
-
-            if (targetVolume > 0 && audioElement.paused) {
-                 audioElement.play().catch(e => console.error(`Error playing ${audioElement.src.split('/').pop()}:`, e));
-            }
-
-            intervalIdRef.id = setInterval(() => {
-                currentStep++;
-                let newVolume = startVolume + volumeChange * currentStep;
-
-                if ((volumeChange > 0 && newVolume >= targetVolume) || (volumeChange < 0 && newVolume <= targetVolume) || currentStep >= fadeSteps) {
-                    audioElement.volume = targetVolume;
-                    clearInterval(intervalIdRef.id);
-                    intervalIdRef.id = null;
-                    console.log(`Fade complete for ${audioElement.src.split('/').pop()}. Final volume: ${targetVolume.toFixed(2)}`);
-                    if (targetVolume <= 0) {
-                        audioElement.pause();
-                        audioElement.currentTime = 0; // Reset for next play if needed
-                        console.log(`Paused ${audioElement.src.split('/').pop()}`);
-                    }
-                    if (onComplete) onComplete();
-                } else {
-                    audioElement.volume = newVolume;
-                }
-            }, intervalTime);
-        }
-        // ADD END: Ambience Sound Control Functions
-
-        function showTrain(destinationName, destinationUrl) {
-            // Note: Arrival sound is now started 3.5s BEFORE this function is fully called (see scheduleArrival)
-            if (!trainElement || !getInBtn) return;
-
-            console.log(`Train arriving visually for: ${destinationName}`);
-            // playArrivalSound(); // MOVED to scheduleArrival timeout
-            currentTrainDestinationUrl = destinationUrl;
-            currentTrainDestinationName = destinationName;
-            scheduledDepartureTime = new Date(Date.now() + trainWaitTime);
-
-            // Update display for arrival and start countdown
-            updateDisplay(`NOW BOARDING`, `TO: ${destinationName}`);
-            startDepartureCountdown();
-
-            trainElement.classList.remove('hidden', 'departing');
-            void trainElement.offsetWidth; // Force reflow
-            trainElement.classList.add('arriving');
-            isTrainPresent = true;
-        }
-
-        function hideTrain() {
-            if (!trainElement || !isTrainPresent) return;
-
-            console.log('Train departing...');
-            // Start visual departure and sound simultaneously
-            console.log('Starting visual departure and sound...');
-            trainElement.classList.remove('arriving');
-            trainElement.classList.add('departing');
-            playDepartureSound(); // Play departure sound now
-
-            isTrainPresent = false;
-            currentTrainDestinationUrl = null;
-            currentTrainDestinationName = null;
-            scheduledDepartureTime = null;
-            stopDepartureCountdown(); // Stop countdown
-            updateDisplay(`DEPARTING...`, ``); // Update display
-
-            const onTransitionEnd = (event) => {
-                // Ensure we only react to the transform property finishing
-                if (event.propertyName === 'transform' && event.target === trainElement) {
-                    console.log('Departure visual transition finished.');
-                    trainElement.classList.add('hidden');
-                    trainElement.classList.remove('departing', 'arriving');
-                    trainElement.style.transform = ''; // Reset transform for next arrival
-                    trainElement.removeEventListener('transitionend', onTransitionEnd);
-                    // DO NOT stop sound here - let it play out
-                    // stopTrainSound();
-                    // Schedule the next arrival AFTER hiding is complete
-                    scheduleArrival(); // Schedule the actual next one now
-                }
-            };
-
-            // Add listener *before* starting the transition
-            trainElement.removeEventListener('transitionend', onTransitionEnd); // Remove previous just in case
-            trainElement.addEventListener('transitionend', onTransitionEnd);
-
-            clearTimeout(currentTrainDepartureTimeoutId); // Clear any pending automatic departure timeout
-        }
-
-        // ADD START: Departure Countdown Logic
-        function startDepartureCountdown() {
-            stopDepartureCountdown(); // Clear any existing interval
-            currentDepartureCountdownIntervalId = setInterval(() => {
-                if (!scheduledDepartureTime) {
-                    stopDepartureCountdown();
-                    return;
-                }
-                const remainingTime = scheduledDepartureTime.getTime() - Date.now();
-                if (remainingTime <= 0) {
-                    // Time's up - trigger departure if not already triggered by boarding
-                    stopDepartureCountdown();
-                    if(isTrainPresent) { // Only hide if still present
-                       hideTrain();
-                    }
-                } else {
-                    // Update display with countdown
-                    // Ensure destination name is still available
-                    const destName = currentTrainDestinationName || 'UNKNOWN';
-                    updateDisplay(`DEPARTURE IN: ${formatCountdown(remainingTime)}`, `TO: ${destName}`);
-                }
-            }, 1000); // Update every second
-        }
-
-        function stopDepartureCountdown() {
-            clearInterval(currentDepartureCountdownIntervalId);
-            currentDepartureCountdownIntervalId = null;
-        }
-        // ADD END: Departure Countdown Logic
-
-        // --- Train Schedule Logic --- (Renamed and modified)
-        function scheduleNextTrainAction() {
-            clearTimeout(currentTrainArrivalTimeoutId);
-            clearTimeout(currentTrainDepartureTimeoutId);
-            stopDepartureCountdown();
-            stopTrainSound(); // Stop any sound before scheduling next action
-
-            // Fade out ambience when scheduling next train if mouse isn't over station
-            if (!trainStationSquare.matches(':hover')) {
-                const fadeOutIntervalRef = { id: ambienceFadeOutIntervalId }; // Use a local ref object
-                 fadeAudio(stationAmbiance, 0.0, 500, fadeOutIntervalRef); // Faster fade out (0.5s)
-            }
-
-            if (isTrainPresent) {
-                 // Train is present, initiate departure.
-                 hideTrain(); // hideTrain now schedules the next arrival via transitionend
-            } else {
-                 // Train is not present, schedule next arrival.
-                 scheduleArrival();
-            }
-        }
-
-        function scheduleArrival() {
-             // Clear any previous arrival timeout
-             clearTimeout(currentTrainArrivalTimeoutId);
-
-             // --- START: Destination Queue Management ---
-             if (shuffledDestinationsQueue.length === 0) {
-                 console.log("Destination queue empty. Reshuffling...");
-                 // Get current page filename (handle root path case)
-                 let currentPageFilename = window.location.pathname.split('/').pop();
-                 if (!currentPageFilename || currentPageFilename === '') {
-                     currentPageFilename = 'index.html'; // Assume index.html for root path
-                 }
-                 console.log(`Current page detected: ${currentPageFilename}`);
-
-                 // Filter out the current page destination
-                 const availableDestinations = allDestinations.filter(dest => dest.url !== currentPageFilename);
-                 console.log(`Available destinations for next cycle: ${availableDestinations.map(d => d.name).join(', ')}`);
-
-
-                 if (availableDestinations.length === 0) {
-                     console.error("No available destinations after filtering. Cannot schedule train.");
-                      // Optionally, display an error message on the board
-                      updateDisplay("SERVICE ALERT", "NO DESTINATIONS");
-                      // Maybe try again after a longer delay?
-                      // setTimeout(scheduleArrival, 30000); // Try again in 30s
-                     return; // Stop scheduling
-                 }
-
-                 // Shuffle the filtered list and set it as the new queue
-                 shuffledDestinationsQueue = shuffleArray([...availableDestinations]); // Shuffle a copy
-                 console.log(`New shuffled queue: ${shuffledDestinationsQueue.map(d => d.name).join(' -> ')}`);
-             }
-
-              // Get the next destination from the front of the queue
-             const destination = shuffledDestinationsQueue.shift(); // Removes and returns the first element
-             if (!destination) {
-                 console.error("Failed to get a destination from the queue, even after attempting refill.");
-                 updateDisplay("SYSTEM ERROR", "TRY AGAIN LATER");
-                 // Attempt to recover by forcing a reshuffle next time
-                 shuffledDestinationsQueue = []; // Clear queue to trigger refill on next call
-                 setTimeout(scheduleArrival, 5000); // Try again soon
-                 return;
-             }
-             console.log(`Next destination from queue: ${destination.name}`);
-             // --- END: Destination Queue Management ---
-
-
-             const delay = Math.random() * (maxArrivalDelay - minArrivalDelay) + minArrivalDelay;
-             scheduledArrivalTime = new Date(Date.now() + delay);
-                // const randomIndex = Math.floor(Math.random() * randomDestinations.length); // REMOVED
-                // const destination = randomDestinations[randomIndex]; // REMOVED - using queue now
-
-             console.log(`Scheduling next train (${destination.name}) arrival sound in ~${Math.round((delay - 1000) / 1000)}s, visual in ~${Math.round(delay / 1000)}s.`); // Adjusted sound delay log
-             updateDisplay(`NEXT ARRIVAL: ${destination.name}`, `AT: ${formatTime(scheduledArrivalTime)}`);
-
-             // --- ADJUST SOUND TIMING HERE ---
-             // Play arrival sound 1.0 second *before* the scheduled visual arrival time.
-             const soundDelay = Math.max(0, delay - 1000); // Ensure delay is not negative
-             // Play brake sound 0.5 seconds *before* visual arrival (0.5s after main arrival sound starts)
-             const brakeSoundDelay = Math.max(0, delay - 500);
-             console.log(`Arrival sound scheduled in ${soundDelay / 1000}s.`);
-             console.log(`Brake sound scheduled in ${brakeSoundDelay / 1000}s.`);
-
-             currentTrainArrivalTimeoutId = setTimeout(() => {
-                 console.log("Playing arrival sound now (scheduled).");
-                 playArrivalSound(); // Start sound first
-
-                 // Schedule the brake sound to start 0.5s after the main arrival sound
-                 setTimeout(() => {
-                     console.log("Playing brake sound now (scheduled).");
-                     playBrakeSound();
-                 }, 500); // 500ms delay after main arrival sound starts
-
-                 // Schedule the visual arrival 1.0 second later (to match sound pre-delay)
-                 setTimeout(() => {
-                    console.log("Showing train visually now (scheduled).");
-                    // Call the visual part of showTrain
-                    showTrainVisuals(destination.name, destination.url);
-
-                    // Schedule automatic departure if not boarded (based on visual arrival time)
-                    clearTimeout(currentTrainDepartureTimeoutId); // Clear any lingering departure timeout
-                currentTrainDepartureTimeoutId = setTimeout(() => {
-                     if(isTrainPresent) { // Check again if it's still here
-                        console.log("Train wait time expired. Departing automatically.");
-                            hideTrain(); // hideTrain now handles the sound and visual delay
-                        }
-                    }, trainWaitTime); // Wait time starts AFTER visual arrival
-
-                 }, 1000); // 1.0 second delay between sound start and visual start
-
-             }, soundDelay);
-         }
-
-         // Helper function for just the visual parts of showTrain
-         function showTrainVisuals(destinationName, destinationUrl) {
-             if (!trainElement || !getInBtn) return;
-             console.log(`Showing train visuals for ${destinationName}`);
-
-             // Update state variables (originally in showTrain)
-             currentTrainDestinationUrl = destinationUrl;
-             currentTrainDestinationName = destinationName;
-             scheduledDepartureTime = new Date(Date.now() + trainWaitTime); // Reset departure time based on visual arrival
-
-             // Update display for arrival and start countdown
-             updateDisplay(`NOW BOARDING`, `TO: ${destinationName}`);
-             startDepartureCountdown(); // Start countdown based on visual arrival
-
-             // Apply visual classes
-             trainElement.classList.remove('hidden', 'departing');
-             void trainElement.offsetWidth; // Force reflow
-             trainElement.classList.add('arriving');
-             isTrainPresent = true; // Mark as present visually
-         }
-
-
-        // --- Event Listeners ---
-        if (getInBtn) {
-            getInBtn.addEventListener('click', () => {
-                if (currentTrainDestinationUrl && trainElement && isTrainPresent) {
-                    console.log(`Boarding train to: ${currentTrainDestinationName}`);
-
-                     // 0. Fade out button & Stop countdown & Stop arrival sound / Start departure sound / Play door sound
-                    // These happen IMMEDIATELY on click
-                    getInBtn.classList.add('fade-out');
-                    stopDepartureCountdown();
-                    trainDoorSound.play().catch(e => console.error("Error playing train door sound:", e)); // <<< Play door sound immediately
-                    updateDisplay(`BOARDING COMPLETE`, `EN ROUTE TO: ${currentTrainDestinationName}`);
-                    const redirectUrl = currentTrainDestinationUrl; // Store URL before timeout
-
-                    // 1. DELAYED ACTIONS: Start train movement, overlay, and redirection after 3 seconds
-                    console.log("Starting 3-second boarding timer before departure...");
-                    setTimeout(() => {
-                        console.log("3-second timer complete. Initiating departure sequence.");
-
-                        // Actions that now happen after 3 seconds:
-                        playDepartureSound(); // <<< MOVED HERE: Start departure sound with visual departure
-                        isTrainPresent = false; // Mark train as gone for scheduling
-                        trainElement.classList.remove('arriving');
-                        trainElement.classList.add('departing');
-                        clearTimeout(currentTrainDepartureTimeoutId); // Clear scheduled automatic departure
-                        clearTimeout(currentTrainArrivalTimeoutId); // Clear any pending arrival timeout just in case
-
-                        // Start visual departure immediately (sound already started earlier)
-                        console.log('Starting visual departure...'); // Sound started 3s ago
-
-                        // 2. Set timeout for overlay fade-in (relative to visual departure START - now 1s after the 3s delay)
-                        setTimeout(() => {
-                            const blurOverlay = document.getElementById('departure-overlay');
-                            let overlayToUse = blurOverlay;
-                            if (!overlayToUse) {
-                                console.log("Creating departure overlay.");
-                                overlayToUse = document.createElement('div');
-                                overlayToUse.id = 'departure-overlay';
-                                document.body.appendChild(overlayToUse);
-                            }
-                            void overlayToUse.offsetWidth; // Trigger reflow
-                            overlayToUse.classList.add('visible');
-                            console.log("Departure overlay made visible.");
-                        }, 4000); // 1s + 3s delay = 4s delay for overlay (7s total from click)
-
-                        // 3. Set timeout for redirection (relative to visual departure START - now 1.5s after the 3s delay)
-                        setTimeout(() => {
-                            console.log(`Redirecting to: ${redirectUrl}`);
-                            if (redirectUrl) {
-                                window.location.href = redirectUrl;
-                            } else {
-                                console.error("Redirect URL was lost before redirection could occur.");
-                                const overlay = document.getElementById('departure-overlay');
-                                if(overlay) overlay.classList.remove('visible');
-                                stopTrainSound(); // Stop sound if redirect fails
-                                scheduleArrival(); // Try to recover schedule
-                            }
-                        }, 1500); // 1.5s delay for redirect (4.5s total from click)
-
-                    }, 3000); // 3-second delay before starting departure sequence
-
-                } else {
-                     console.warn("Get In button clicked, but no destination URL/name set, train element not found, or train not present.");
-                }
-            });
-        }
-
-        // ADD START: Ambience Hover Listeners
-        const ambienceFadeDuration = 1500; // 1.5 seconds
-        const fadeInIntervalRef = { id: ambienceFadeInIntervalId };
-        const fadeOutIntervalRef = { id: ambienceFadeOutIntervalId };
-
-        trainStationSquare.addEventListener('mouseenter', () => {
-            console.log("Mouse entered station, fading in ambience.");
-            // Clear potential fade-out first
-            if (fadeOutIntervalRef.id) {
-                 clearInterval(fadeOutIntervalRef.id);
-                 fadeOutIntervalRef.id = null;
-                 console.log("Cleared existing ambience fade-out interval.");
-            }
-            // Pass interval ID objects by reference
-            fadeAudio(stationAmbiance, 1.0, ambienceFadeDuration, fadeInIntervalRef);
+        }, 0)
+        // 2. Rotate the image to horizontal (with a delay after text exit)
+        .to(image, { 
+            rotate: -90,
+            duration: 0.5
+        }, 0.5)
+        // 3. Scale up the image significantly to simulate zooming in
+        .to(image, {
+            scale: 15,
+            duration: 1.0,
+            ease: "power1.in"
+        }, ">-=0.2")
+        // 4. (Optional) Fade out image during the end of the zoom to reveal content
+        .to(image, {
+            opacity: 0,
+            duration: 0.3
+        }, ">-0.3");
+
+    // --- Text Hover Effects ---
+    textElements.forEach(p => {
+        const splitHover = new SplitText(p, { type: "chars" });
+        const hoverTL = gsap.timeline({ paused: true });
+
+        hoverTL.to(splitHover.chars, {
+            y: -10,
+            opacity: 0.8,
+            color: "#961e2c", // Example hover color
+            stagger: {
+                each: 0.05,
+                from: "start"
+            },
+            duration: 0.4,
+            ease: "power1.out"
         });
 
-        trainStationSquare.addEventListener('mouseleave', () => {
-            console.log("Mouse left station, fading out ambience.");
-            // Clear potential fade-in first
-            if (fadeInIntervalRef.id) {
-                 clearInterval(fadeInIntervalRef.id);
-                 fadeInIntervalRef.id = null;
-                 console.log("Cleared existing ambience fade-in interval.");
-            }
-             // Pass interval ID objects by reference
-            fadeAudio(stationAmbiance, 0.0, ambienceFadeDuration, fadeOutIntervalRef);
-        });
-        // ADD END: Ambience Hover Listeners
+        p.addEventListener("mouseenter", () => hoverTL.play());
+        p.addEventListener("mouseleave", () => hoverTL.reverse());
+    });
 
-
-        // --- Initialization ---
-        console.log("Initializing train schedule and display...");
-         stopTrainSound(); // Ensure no sound plays initially
-        updateDisplay("INITIALIZING...", "AWAITING SCHEDULE"); // Initial display message
-        // Initialize the queue logic by calling scheduleArrival which will populate it
-        // scheduleArrival(); // REMOVED - now called after short delay
-        setTimeout(() => {
-             scheduleArrival(); // Start the first arrival schedule - this will now populate the queue
-        }, 1500); // Short delay before first schedule
-
-    } // end if (trainStationSquare)
-
-}); // End of DOMContentLoaded
+}); 
