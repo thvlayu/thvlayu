@@ -7,6 +7,32 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- SVG Defs for Button Gradient and Glow -->
+    <svg style="position: absolute; width: 0; height: 0; overflow: hidden;">
+        <defs>
+            <linearGradient id="button-gradient" x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" style="stop-color:#51080d;" />
+                <stop offset="33%" style="stop-color:#2b0307;" />
+                <stop offset="66%" style="stop-color:#75020f;" />
+                <stop offset="100%" style="stop-color:#51080d;" />
+                <animateTransform 
+                    attributeName="gradientTransform" 
+                    type="translate" 
+                    from="0 0" 
+                    to="300 0"
+                    dur="7s" 
+                    repeatCount="indefinite" />
+            </linearGradient>
+            <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </defs>
+    </svg>
+
     <div class="invitation-container">
         <img src="Assets/main.png" alt="Invitation Card" class="invitation-image">
         <div class="invitation-text">
@@ -14,6 +40,57 @@
             <p id="line2">been</p>
             <p id="line3">Invited</p>
         </div>
+    </div>
+
+    <!-- NEW WELCOME SCREEN -->
+    <div class="welcome-screen">
+        <div class="welcome-text-container">
+            <p class="welcome-title">Welcome,</p>
+            <p class="welcome-subtitle">what would you like to do?</p>
+        </div>
+        <div class="welcome-buttons">
+            <button id="stay-button" class="gsap-button">
+                <svg preserveAspectRatio="none">
+                    <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx="18.5" ry="18.5" />
+                </svg>
+                <span>Stay</span>
+            </button>
+            <button id="accept-button" class="gsap-button">
+                 <svg preserveAspectRatio="none">
+                    <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx="18.5" ry="18.5" />
+                 </svg>
+                <span>Accept Invite</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Container for the light exploration effect -->
+    <div class="light-explore-container">
+        <img src="Assets/light.jpeg" alt="Explorable Light Art" class="light-image">
+        <!-- Container for Chapter Titles -->
+        <div class="chapter-titles-container">
+            <p class="chapter-title" id="chapter1">I. Echoes in Shadow</p>
+            <p class="chapter-title" id="chapter2">II. The Fractured Truth</p>
+            <p class="chapter-title" id="chapter3">III. Whispers of Reality</p>
+            <p class="chapter-title" id="chapter4">IV. Confronting Illusions</p>
+            <p class="chapter-title" id="chapter5">V. The Final Revelation</p>
+        </div>
+    </div>
+
+    <!-- NEW STAY PAGE CONTAINER -->
+    <div class="stay-page-container">
+        <section id="stay-about" class="stay-section">
+            <h2>About Me</h2>
+            <!-- Add content here -->
+        </section>
+        <section id="stay-projects" class="stay-section">
+            <h2>Projects</h2>
+            <!-- Add project cards or list here -->
+        </section>
+        <section id="stay-contact" class="stay-section">
+            <h2>Contact</h2>
+            <!-- Add contact form or info here -->
+        </section>
     </div>
 
     <!-- Add more content below to enable scrolling -->

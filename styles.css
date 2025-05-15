@@ -79,4 +79,259 @@ body {
 
 #line3 {
     top: 90%; /* Example: Position 'Invited' lower down */
+}
+
+/* Styles for the Light Exploration Effect */
+.light-explore-container {
+    position: fixed; /* Keep it fixed over content */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10; /* Ensure it appears above the initial content after transition */
+    opacity: 0;
+    visibility: hidden; /* Start hidden */
+    pointer-events: none; /* Don't capture mouse events initially */
+    background-color: #000; /* Dark background */
+    overflow: hidden; /* Needed for mask */
+}
+
+.light-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Cover the container */
+    /* CSS Mask for reveal effect */
+    mask-image: radial-gradient(circle, white 15%, rgba(255,255,255,0.5) 30%, rgba(0,0,0,0) 50%); /* Fade to fully transparent at 50% radius */
+    mask-size: 400px 400px; /* Increased size of the reveal 'spotlight' */
+    mask-repeat: no-repeat;
+    mask-position: -9999px -9999px; /* Start mask off-screen */
+    /* Ensure image itself is ready */
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Styles for the Chapter Titles */
+.chapter-titles-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Prevent text from interfering with mouse events */
+    overflow: hidden; /* Hide text outside the mask */
+    /* Apply the same mask as the light image */
+    mask-image: radial-gradient(circle, white 15%, rgba(255,255,255,0.5) 30%, rgba(0,0,0,0) 50%);
+    mask-size: 400px 400px; 
+    mask-repeat: no-repeat;
+    mask-position: -9999px -9999px; /* Start mask off-screen */
+}
+
+.chapter-title {
+    position: absolute;
+    font-family: 'Test Tiempos Fine'; /* Match theme */
+    font-weight: 300;
+    font-size: 1.8rem; /* Adjust size as needed */
+    color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8); /* Shadow for readability */
+    margin: 0;
+    white-space: nowrap; /* Prevent titles from wrapping */
+}
+
+/* Style for clicked chapter */
+.chapter-clicked {
+    /* text-decoration: line-through; REMOVED */
+    /* text-decoration-thickness: 2px; REMOVED */
+    /* Optional: Slightly fade the text color */
+    color: rgba(255, 255, 255, 0.6);
+    transition: color 0.5s ease-in-out; /* Add transition for color fade */
+}
+
+/* Add pseudo-element for animated strikethrough */
+.chapter-title::after {
+    content: '';
+    position: absolute;
+    width: 0; /* Start hidden */
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.7); /* Strikethrough color */
+    bottom: 45%; /* Adjust vertical position of the line */
+    left: 0;
+    transition: width 0.6s ease-in-out; /* Animation timing */
+}
+
+/* Apply help cursor on hover for unclicked titles */
+.chapter-title:not(.chapter-clicked):hover {
+    cursor: help;
+}
+
+.chapter-clicked::after {
+    width: 100%; /* Animate to full width */
+}
+
+/* Approximate positioning based on visual landmarks in light.jpeg */
+#chapter1 { top: 5%; left: 52%; transform: translateX(-50%); }
+#chapter2 { top: 50%; left: 15%; transform: translateX(-50%); }
+#chapter3 { top: 85%; left: 50%; transform: translateX(-50%); }
+#chapter4 { top: 50%; left: 88%; transform: translateX(-50%); }
+#chapter5 { top: 50%; left: 50%; transform: translateX(-50%); }
+
+/* Styles for the Welcome Screen */
+.welcome-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    z-index: 20; /* Above invitation, below light-explore when active */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    font-family: 'Test Tiempos Fine';
+}
+
+.welcome-text-container {
+    margin-bottom: 40px;
+}
+
+.welcome-title {
+    font-size: 4rem;
+    font-weight: 300; /* Light variant of Test Tiempos Fine */
+    margin: 0 0 10px 0;
+    color: #fff; /* Fallback color */
+    /* Styles for gradient text */
+    background-image: linear-gradient(to right, #75020f, #51080d,#2b0307, #800000, #75020f);
+    /* black, grey, blue, grey, black */
+    background-size: 300% auto; /* Make gradient wider than the element */
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    /* Ensure the background position starts at the beginning */
+    background-position: 0% center;
+    /* Add display: inline-block if it helps with layout/clipping */
+    display: inline-block; 
+}
+
+.welcome-subtitle {
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin: 0;
+    color: #ccc;
+}
+
+.welcome-buttons button {
+    font-family: 'Test Tiempos Fine';
+    font-weight: 300;
+    font-size: 1.2rem;
+    padding: 15px 40px;
+    margin: 0 15px;
+    border: none;
+    border-radius: 20px;
+    background-color: #000; /* Black background */
+    color: #fff;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.2s ease;
+    outline: none;
+    position: relative; /* For SVG positioning */
+    overflow: hidden; /* Keep hidden for now, can be 'visible' for glow to spread */
+    z-index: 1;
+
+    span {
+        position: relative;
+        z-index: 2; /* Text above SVG */
+    }
+}
+
+.welcome-buttons button svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* SVG doesn't intercept clicks */
+    z-index: 1; /* SVG layer between background and text span */
+    overflow: visible; /* Allow glow to spread */
+    opacity: 0; /* Start hidden, fade in on hover */
+    transition: opacity 0.3s ease;
+}
+
+.welcome-buttons button svg rect {
+    fill: none;
+    stroke: url(#button-gradient);
+    stroke-width: 3px; /* Outline thickness */
+    /* stroke-dasharray: 1000; Removed - Set by JS */
+    /* stroke-dashoffset: 1000; Removed - Set by JS */
+    filter: url(#glow);
+}
+
+@keyframes draw-border {
+    to {
+        stroke-dashoffset: 0; /* Animate to fully drawn stroke */
+    }
+}
+
+.welcome-buttons button:hover svg {
+    opacity: 1; /* Show SVG border on hover */
+}
+
+.welcome-buttons button:hover svg rect {
+     animation: draw-border 7s linear forwards;
+}
+
+.welcome-buttons button:hover {
+    /* background-color: #fff; */ /* Keep background transparent on hover */
+    /* color: #000; */ /* Keep text color white */
+    transform: scale(1.05);
+}
+
+.welcome-buttons button:active {
+    transform: scale(0.98);
+} 
+
+/* Remove old keyframes if they exist */
+/* @keyframes gradient-border-spin { ... } */ 
+
+/* Styles for the Stay Page (Portfolio) */
+.stay-page-container {
+    position: fixed; /* Or absolute, depending on desired scroll behavior with rest of site */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000000; /* Pure black background */
+    z-index: 15; /* Below light-explore if it were to become active over it, above welcome */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    overflow-y: auto; /* Allow scrolling within the portfolio page */
+    padding: 50px; /* Add some padding */
+    box-sizing: border-box;
+    font-family: 'Test Tiempos Fine';
+}
+
+.stay-section {
+    margin-bottom: 50px;
+    padding: 20px;
+    border-bottom: 1px solid #333; /* Separator for sections */
+    color: #ccc;
+}
+
+.stay-section h2 {
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+/* Example: Further styling for content within sections can be added here */
+.stay-section p {
+    font-size: 1.1rem;
+    line-height: 1.6;
 } 
